@@ -331,7 +331,9 @@ const stations = {
     figureStory: 'He was a highway robber. One night, climbing a wall to sin, he heard: "Has not the time come for hearts to be humbled?" He said, "Yes, Lord, the time has come." He became one of the greatest saints of Islam.',
     currentState: "You've identified as Muslim but have largely abandoned the practices of Islam.",
     goodNews: ['You are still Muslim — mercy is wide open', 'The Prophet ﷺ said the ẓālim "will be forgiven"', 'Many great Muslims started here'],
-    steps: ['Start with ONE prayer daily', 'Add a second prayer after one week', 'Set ONE prayer alarm', "Make duʿāʾ: 'O Allah, help me pray'"]
+    steps: ['Start with ONE prayer daily', 'Add a second prayer after one week', 'Set ONE prayer alarm', "Make duʿāʾ: 'O Allah, help me pray'"],
+    keyPrinciple: '"Don\'t despair of the mercy of Allah"',
+    description: "Doesn't even do the farāʾiḍ — but still Muslim"
   },
   2: {
     name: 'Mixed Deeds',
@@ -344,7 +346,9 @@ const stations = {
     figureStory: "A late convert who mixed good and bad. On his deathbed, he asked companions to stay by his grave — his humility and awareness of his mixed state is a model.",
     currentState: 'You do good deeds but mix them with sins. Your acknowledgment of sin is itself a mercy.',
     goodNews: ['Allah mentions your category with hope', 'Acknowledgment of sin is a sign of faith', 'The struggle you feel IS the spiritual life'],
-    steps: ['Make five prayers non-negotiable', 'Identify your TOP 3 recurring sins', 'Work on eliminating ONE at a time', 'Find accountability']
+    steps: ['Make five prayers non-negotiable', 'Identify your TOP 3 recurring sins', 'Work on eliminating ONE at a time', 'Find accountability'],
+    keyPrinciple: 'Perhaps Allah will make tawba on them',
+    description: 'Mixing good deeds with bad deeds — admits sins'
   },
   3: {
     name: 'The Riffraff',
@@ -357,7 +361,9 @@ const stations = {
     figureStory: "Before Islam, ʿUmar wasn't the worst — just harsh and tribal, spending time without higher purpose. That same energy became al-Fārūq.",
     currentState: "You maintain farāʾiḍ but much time is wasted in things of no benefit.",
     goodNews: ['Your foundations are solid', "You're better than those who waste time AND sin", 'You just need to redirect existing time'],
-    steps: ['Track every hour for ONE week', "Convert 30% of 'wasted' to 'beneficial'", 'Add 10 min Quran after Fajr', 'Join ONE regular beneficial gathering']
+    steps: ['Track every hour for ONE week', "Convert 30% of 'wasted' to 'beneficial'", 'Add 10 min Quran after Fajr', 'Join ONE regular beneficial gathering'],
+    keyPrinciple: 'Wasting time in things of no harm and no benefit',
+    description: 'Wasting time in things of no benefit — but at least not sinning'
   },
   4: {
     name: 'The Lesser Evil',
@@ -370,7 +376,9 @@ const stations = {
     figureStory: "A powerful minister had his sheikh make him sit on a garbage heap and beg. This 'lower' thing broke his ego — he became one of the great awliyāʾ of Morocco.",
     currentState: "You think strategically — engaging in something lower can prevent something worse.",
     goodNews: ["You've moved beyond mere compliance", "You're actively working on your heart", 'Your spiritual cause-and-effect awareness is awakening'],
-    steps: ['Make intention for EVERYTHING', 'Build a simple wird', 'Track wird consistency 30 days', 'Study purification of the heart']
+    steps: ['Make intention for EVERYTHING', 'Build a simple wird', 'Track wird consistency 30 days', 'Study purification of the heart'],
+    keyPrinciple: 'Doing something normally unacceptable to ward off something worse',
+    description: 'Doing lower things to ward off worse things'
   },
   5: {
     name: 'Ennobled Permissibles',
@@ -383,7 +391,9 @@ const stations = {
     figureStory: "One of the ten promised Paradise, enormously wealthy — but his wealth was worship. He transformed commerce into ʿibādah through intention.",
     currentState: "You transform ordinary activities into worship through intention.",
     goodNews: ["You're living Islam in every moment", 'The mundane has become sacred', 'Your entire life is becoming worship'],
-    steps: ['Add disputed good deeds scholars recommend', 'Engage with ikhtilāf', "Learn your madhab's positions", 'Practice "this is valid, this is also valid"']
+    steps: ['Add disputed good deeds scholars recommend', 'Engage with ikhtilāf', "Learn your madhab's positions", 'Practice "this is valid, this is also valid"'],
+    keyPrinciple: 'No permissible thing except it can become noble through intention',
+    description: 'Permissible things that become noble deeds through intention'
   },
   6: {
     name: 'Disputed Virtues',
@@ -396,7 +406,9 @@ const stations = {
     figureStory: 'The Andalusian scholar faced criticism for disputed positions. He wrote extensively defending legitimate ikhtilāf while respecting those who differed.',
     currentState: "You engage in acts some call recommended, others permissible — following valid opinions without condemning others.",
     goodNews: ["You're never below mubāḥ", 'You embody the tolerance the Prophet ﷺ wanted', 'You understand ikhtilāf is mercy'],
-    steps: ['Ask: "Is this the BEST use of my time?"', 'Learn relative ranks of good deeds', 'Protect your peak spiritual hours', 'Prioritize benefiting others']
+    steps: ['Ask: "Is this the BEST use of my time?"', 'Learn relative ranks of good deeds', 'Protect your peak spiritual hours', 'Prioritize benefiting others'],
+    keyPrinciple: 'Never in anything less than mubāḥ with everybody',
+    description: 'Doing things disputed between being virtuous vs. permissible'
   },
   7: {
     name: 'Important Things',
@@ -409,7 +421,9 @@ const stations = {
     figureStory: "In Mālik's circle, he got up to pray nāfila. Mālik stopped him: 'What you're going to is not more important than what you're in. This IS ʿibādah.'",
     currentState: "You're consistently in something important — your time is purposeful.",
     goodNews: ["You've internalized that learning IS action", 'Your life has purpose and direction', 'You can reach the ʿārifīn through intention'],
-    steps: ['Ask: "Is there something MORE important now?"', 'Learn the fiqh of priorities', "Study Ḥanẓala's hadith", 'Examine what MORE important thing you might be missing']
+    steps: ['Ask: "Is there something MORE important now?"', 'Learn the fiqh of priorities', "Study Ḥanẓala's hadith", 'Examine what MORE important thing you might be missing'],
+    keyPrinciple: 'Being in something important if not in what is more important',
+    description: 'In something important if not the more important'
   },
   8: {
     name: 'Hour by Hour',
@@ -422,7 +436,9 @@ const stations = {
     figureStory: 'He said "Ḥanẓala has become a hypocrite!" — exalted with the Prophet ﷺ, then preoccupied with family. The Prophet ﷺ said: "Sāʿatun wa sāʿatun — a time for this, a time for that."',
     currentState: 'You practice "a time for this, a time for that" — alternating between important and MORE important.',
     goodNews: ['You recognize different spiritual states', 'Like Ḥanẓala, you feel the difference', 'If always exalted, angels would shake your hands'],
-    steps: ['Minimize gap between exalted and ordinary', 'Bring FULL presence to everything', 'Practice continuous dhikr', 'Spend more time with people of Station 9']
+    steps: ['Minimize gap between exalted and ordinary', 'Bring FULL presence to everything', 'Practice continuous dhikr', 'Spend more time with people of Station 9'],
+    keyPrinciple: 'A time for this, a time for that — alternating between states',
+    description: 'Either in something important OR something more important'
   },
   9: {
     name: "Station of the ʿĀrifīn",
@@ -436,7 +452,33 @@ const stations = {
     currentState: 'If death came now, you would not find anything you would want to increase.',
     goodNews: ['This is the station of the knowers of Allah', "Al-Mawwāq: 'not in the capacity of the majority'", 'Even ʿārifūn slip — perfected only in prophets'],
     steps: ["Never assume you've 'arrived'", 'See yourself as the least of Muslims', 'Your role is helping others climb', 'Your presence should elevate others'],
-    warning: "If you scored yourself here, you're probably not in it. The ʿārifūn see themselves as lowest."
+    warning: "If you scored yourself here, you're probably not in it. The ʿārifūn see themselves as lowest.",
+    keyPrinciple: 'If surprised by death, would find nothing to increase',
+    description: 'Always doing the most important thing at every moment'
+  }
+};
+
+const categoryInfo = {
+  sabiq: {
+    name: 'Sābiq bil-Khayrāt',
+    arabic: 'سابق بالخيرات',
+    meaning: 'Those Who Race to Good',
+    description: 'The highest three stations',
+    color: '#D4AF37',
+  },
+  muqtasid: {
+    name: 'Muqtaṣid',
+    arabic: 'مقتصد',
+    meaning: 'Those Who Are Moderate',
+    description: 'The middle three stations',
+    color: '#2E8B57',
+  },
+  dhalim: {
+    name: 'Ẓālim li-Nafsihi',
+    arabic: 'ظالم لنفسه',
+    meaning: 'Those Who Wrong Themselves',
+    description: 'The lowest three stations — yet still people of Paradise',
+    color: '#8B4513',
   }
 };
 
@@ -472,10 +514,191 @@ const calculateStation = (answers) => {
   return { station: 9, totalScore, sectionScores };
 };
 
+// Maqamat Dashboard Component
+function MaqamatDashboard({ onBack, userStation }) {
+  const [selectedMaqam, setSelectedMaqam] = useState(null);
+  
+  const maqamatArray = Object.entries(stations).map(([id, data]) => ({
+    id: parseInt(id),
+    ...data
+  })).sort((a, b) => b.id - a.id);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <button
+            onClick={onBack}
+            className="mb-6 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-slate-400 hover:bg-white/10 transition-all text-sm"
+          >
+            ← Back to Results
+          </button>
+          <div className="text-4xl text-amber-400 mb-3 font-arabic">المقامات التسعة</div>
+          <h1 className="text-2xl font-light mb-2 tracking-wide">The Nine Maqāmāt</h1>
+          <p className="text-slate-400 text-sm max-w-xl mx-auto">
+            The descending ladder of spiritual stations from al-Mawwāq's Sunan al-Muhtadīn
+          </p>
+        </div>
+
+        {/* Quranic Verse */}
+        <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-5 mb-8 text-center">
+          <p className="text-lg text-amber-400 mb-2 font-arabic">
+            ثُمَّ أَوْرَثْنَا الْكِتَابَ الَّذِينَ اصْطَفَيْنَا مِنْ عِبَادِنَا
+          </p>
+          <p className="text-sm text-slate-400 italic">
+            "Then We caused to inherit the Book those We have chosen of Our servants" — Fāṭir 35:32
+          </p>
+        </div>
+
+        {/* Category Legend */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {Object.entries(categoryInfo).map(([key, cat]) => (
+            <div key={key} className="flex items-center gap-2">
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ background: cat.color, boxShadow: `0 0 8px ${cat.color}60` }}
+              />
+              <span className="text-sm">
+                <span style={{ color: cat.color }}>{cat.arabic}</span>
+                <span className="text-slate-500 ml-2">{cat.meaning}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Maqamat List */}
+        <div className="space-y-4">
+          {maqamatArray.map((maqam) => {
+            const isUserStation = userStation === maqam.id;
+            const isExpanded = selectedMaqam === maqam.id;
+            
+            return (
+              <div
+                key={maqam.id}
+                onClick={() => setSelectedMaqam(isExpanded ? null : maqam.id)}
+                className={`
+                  rounded-xl p-5 cursor-pointer transition-all border
+                  ${isUserStation ? 'ring-2 ring-amber-400/50' : ''}
+                  ${isExpanded 
+                    ? 'bg-white/10 border-white/20' 
+                    : 'bg-white/5 border-transparent hover:bg-white/8'
+                  }
+                `}
+              >
+                <div className="flex items-start gap-4">
+                  {/* Station Number */}
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${maqam.color}, ${maqam.color}aa)`,
+                      color: '#0a1628',
+                      boxShadow: isUserStation ? `0 0 20px ${maqam.color}60` : 'none'
+                    }}
+                  >
+                    {maqam.id}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="text-xl font-arabic" style={{ color: maqam.color }}>
+                        {maqam.arabic}
+                      </span>
+                      {isUserStation && (
+                        <span className="px-2 py-0.5 bg-amber-400/20 text-amber-400 text-xs rounded-full">
+                          Your Station
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-medium mb-1">{maqam.name}</h3>
+                    <p className="text-sm text-slate-400">{maqam.description}</p>
+                    
+                    {/* Category Badge */}
+                    <div className="mt-2">
+                      <span 
+                        className="text-xs px-2 py-1 rounded-full"
+                        style={{ 
+                          background: `${categoryInfo[maqam.category].color}20`,
+                          color: categoryInfo[maqam.category].color
+                        }}
+                      >
+                        {maqam.categoryArabic} • {maqam.categoryName}
+                      </span>
+                    </div>
+
+                    {/* Expanded Content */}
+                    {isExpanded && (
+                      <div className="mt-4 pt-4 border-t border-white/10 space-y-4">
+                        {/* Key Principle */}
+                        <div className="bg-black/20 rounded-lg p-4">
+                          <div className="text-xs uppercase tracking-wider text-slate-500 mb-1">Key Principle</div>
+                          <p className="text-sm text-slate-300 italic">"{maqam.keyPrinciple}"</p>
+                        </div>
+
+                        {/* Historical Figure */}
+                        <div className="bg-amber-400/5 rounded-lg p-4">
+                          <div className="text-xs uppercase tracking-wider text-amber-400/70 mb-1">Historical Example</div>
+                          <div className="text-amber-400 font-medium mb-1">{maqam.figure}</div>
+                          <p className="text-sm text-slate-400">{maqam.figureStory}</p>
+                        </div>
+
+                        {/* Path Forward */}
+                        <div>
+                          <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Path Forward</div>
+                          <div className="grid gap-2">
+                            {maqam.steps.map((step, i) => (
+                              <div key={i} className="flex items-start gap-2 text-sm">
+                                <span 
+                                  className="w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0"
+                                  style={{ background: `${maqam.color}30`, color: maqam.color }}
+                                >
+                                  {i + 1}
+                                </span>
+                                <span className="text-slate-300">{step}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Expand Icon */}
+                  <div className="text-slate-500 text-xl">
+                    {isExpanded ? '−' : '+'}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Key Insight */}
+        <div className="mt-8 text-center bg-gradient-to-r from-amber-400/10 via-emerald-400/10 to-orange-400/10 rounded-xl p-6 border border-white/10">
+          <p className="text-2xl text-amber-400 font-arabic mb-2">كلهم من أهل الجنة</p>
+          <p className="text-lg text-slate-300 mb-2">All Nine Categories Are People of Paradise</p>
+          <p className="text-sm text-slate-500 max-w-lg mx-auto">
+            "Our outstripper is a true outstripper, our moderate one has salvation, 
+            and the one who oppressed himself will be forgiven." — Prophet ﷺ
+          </p>
+        </div>
+
+        {/* Footer */}
+        <footer className="text-center mt-10 pt-6 border-t border-white/10 text-slate-600 text-xs">
+          Based on <em>Sunan al-Muhtadīn</em> by Imam al-Mawwāq (d. 897 AH)
+          <br />As taught by Sheikh Hamza Yusuf • DEENSTREAM Turkey 2015
+        </footer>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [currentSection, setCurrentSection] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const [result, setResult] = useState(null);
   const [started, setStarted] = useState(false);
 
@@ -506,9 +729,20 @@ function App() {
     setAnswers({});
     setCurrentSection(0);
     setShowResults(false);
+    setShowDashboard(false);
     setResult(null);
     setStarted(false);
   };
+
+  // Show Dashboard
+  if (showDashboard && result) {
+    return (
+      <MaqamatDashboard 
+        onBack={() => { setShowDashboard(false); window.scrollTo(0, 0); }}
+        userStation={result.station}
+      />
+    );
+  }
 
   // Landing Page
   if (!started) {
@@ -633,12 +867,19 @@ function App() {
             <p className="text-slate-400 text-sm">"All nine categories are people of Paradise"</p>
           </div>
 
-          <div className="text-center">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
+            <button
+              onClick={() => { setShowDashboard(true); window.scrollTo(0, 0); }}
+              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-lg font-semibold hover:from-amber-400 hover:to-amber-500 transition-all"
+            >
+              📖 Maqāmāt Explained
+            </button>
             <button
               onClick={resetAssessment}
               className="px-6 py-3 bg-white/5 border border-white/20 rounded-lg text-slate-300 hover:bg-white/10 transition-all"
             >
-              Retake Assessment
+              ↺ Retake Assessment
             </button>
           </div>
 
