@@ -1,541 +1,776 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const sections = [
-  {
-    id: 'A',
-    title: 'The Foundations',
-    arabic: 'الأساسيات',
-    description: 'Assessment of obligatory acts (Farāʾiḍ)',
-    questions: [
-      {
-        id: 'A1',
-        text: 'How consistent are you with the five daily prayers?',
-        critical: true,
-        options: [
-          { value: 0, label: 'I rarely pray or have abandoned prayer almost entirely' },
-          { value: 1, label: 'I pray sometimes but miss many prayers regularly' },
-          { value: 2, label: 'I pray most prayers but frequently miss one or two daily' },
-          { value: 3, label: 'I pray all five but sometimes miss them (making up later)' },
-          { value: 4, label: 'I pray all five consistently, rarely missing any' },
-          { value: 5, label: 'I pray all five on time and add regular nawāfil' }
-        ]
-      },
-      {
-        id: 'A2',
-        text: 'How do you approach the obligatory fast of Ramadan?',
-        options: [
-          { value: 0, label: "I don't fast Ramadan" },
-          { value: 1, label: 'I fast some days but not consistently' },
-          { value: 2, label: 'I fast most of Ramadan with some missed days (not made up)' },
-          { value: 3, label: 'I fast Ramadan completely, making up any missed days' },
-          { value: 4, label: 'I fast Ramadan and occasionally fast voluntary fasts' },
-          { value: 5, label: 'I fast Ramadan plus regular sunnah fasts (Mondays/Thursdays, etc.)' }
-        ]
-      },
-      {
-        id: 'A3',
-        text: 'If zakat is obligatory on you, how do you handle it?',
-        options: [
-          { value: 0, label: "I don't pay zakat even though it's obligatory on me" },
-          { value: 1, label: 'I pay zakat inconsistently or less than required' },
-          { value: 2, label: 'I pay zakat but without careful calculation' },
-          { value: 3, label: 'I pay zakat correctly and on time' },
-          { value: 4, label: 'I pay zakat and give regular sadaqah' },
-          { value: 5, label: 'I pay zakat, give regular sadaqah, and seek out those in need' }
-        ]
-      },
-      {
-        id: 'A4',
-        text: 'How would you describe your relationship with major sins?',
-        critical: true,
-        options: [
-          { value: 0, label: "I'm involved in major sins without concern" },
-          { value: 1, label: 'I commit major sins but feel guilty afterward' },
-          { value: 2, label: 'I struggle with major sins, making tawbah but relapsing' },
-          { value: 3, label: 'I avoid most major sins but slip occasionally' },
-          { value: 4, label: 'I consistently avoid major sins' },
-          { value: 5, label: 'I avoid major sins and am cautious even about doubtful matters' }
-        ]
-      },
-      {
-        id: 'A5',
-        text: 'When you commit a sin, what is your internal response?',
-        options: [
-          { value: 0, label: "I don't consider my actions sinful / I justify them" },
-          { value: 1, label: "I know it's wrong but feel helpless to change" },
-          { value: 2, label: 'I acknowledge the sin and intend to do better' },
-          { value: 3, label: 'I make tawbah and take steps to avoid repetition' },
-          { value: 4, label: 'I make immediate tawbah and feel genuine remorse' },
-          { value: 5, label: 'I rarely sin, but when I do, I make extensive tawbah' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'B',
-    title: 'Time & Priorities',
-    arabic: 'الوقت والأولويات',
-    description: 'How you spend your non-obligatory time',
-    questions: [
-      {
-        id: 'B1',
-        text: 'How do you typically spend your free time?',
-        options: [
-          { value: 0, label: 'Entertainment with no benefit (excessive gaming, binge-watching)' },
-          { value: 1, label: 'Mostly entertainment with occasional beneficial activities' },
-          { value: 2, label: 'A mix of entertainment and beneficial activities' },
-          { value: 3, label: 'Mostly beneficial activities with some entertainment' },
-          { value: 4, label: 'Almost all time in beneficial activities' },
-          { value: 5, label: 'I consciously choose the MOST beneficial activity at each moment' }
-        ]
-      },
-      {
-        id: 'B2',
-        text: 'If death came RIGHT NOW, how would you feel about what you\'re doing?',
-        options: [
-          { value: 0, label: "I'd be embarrassed or regretful" },
-          { value: 1, label: "I'd wish I was doing something better" },
-          { value: 2, label: "I'd feel okay — not bad, just not great" },
-          { value: 3, label: "I'd feel reasonably content" },
-          { value: 4, label: "I'd feel good — this is worthwhile" },
-          { value: 5, label: "I'd feel completely at peace — exactly what I should be doing" }
-        ]
-      },
-      {
-        id: 'B3',
-        text: "Do you consider what's MORE important when choosing activities?",
-        options: [
-          { value: 0, label: "I don't think about importance — I do what I feel like" },
-          { value: 1, label: "I sometimes consider what's important" },
-          { value: 2, label: 'I usually choose important things over trivial things' },
-          { value: 3, label: 'I consistently choose important activities' },
-          { value: 4, label: "I often weigh options to find what's MORE important" },
-          { value: 5, label: 'I habitually seek the MOST important thing I could be doing' }
-        ]
-      },
-      {
-        id: 'B4',
-        text: 'In an average week, how many hours feel truly "wasted"?',
-        options: [
-          { value: 0, label: '20+ hours' },
-          { value: 1, label: '15-20 hours' },
-          { value: 2, label: '10-15 hours' },
-          { value: 3, label: '5-10 hours' },
-          { value: 4, label: '2-5 hours' },
-          { value: 5, label: "Less than 2 hours — I'm intentional with almost all my time" }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'C',
-    title: 'Intention & Transformation',
-    arabic: 'النية والتحويل',
-    description: 'The spiritual quality of your actions',
-    questions: [
-      {
-        id: 'C1',
-        text: 'How often do you consciously make intention (niyyah) before daily activities?',
-        options: [
-          { value: 0, label: 'Rarely — I just do things' },
-          { value: 1, label: 'Only before acts of worship' },
-          { value: 2, label: 'Sometimes before important activities' },
-          { value: 3, label: 'Often — I try to have good intentions' },
-          { value: 4, label: "Usually — I consciously intend for Allah's sake" },
-          { value: 5, label: 'Almost always — everything is framed with intention' }
-        ]
-      },
-      {
-        id: 'C2',
-        text: 'Do you transform permissible activities into worship through intention?',
-        subtitle: "Example: Eating for strength to worship, sleeping to rest for tahajjud",
-        options: [
-          { value: 0, label: 'I never thought about this' },
-          { value: 1, label: "I've heard of this but don't practice it" },
-          { value: 2, label: 'I try occasionally' },
-          { value: 3, label: 'I do this somewhat regularly' },
-          { value: 4, label: 'I do this with most daily activities' },
-          { value: 5, label: 'This is my habitual state' }
-        ]
-      },
-      {
-        id: 'C3',
-        text: 'Do you engage in "lesser" activities to prevent yourself from worse ones?',
-        subtitle: 'Example: Nasheed instead of haram music, sports to avoid bad company',
-        options: [
-          { value: 0, label: "I don't think strategically about avoiding sin" },
-          { value: 1, label: "I try to avoid sin but don't use substitutes" },
-          { value: 2, label: 'I sometimes use this strategy' },
-          { value: 3, label: 'I regularly employ this principle' },
-          { value: 4, label: 'I actively plan my life around this principle' },
-          { value: 5, label: "I've structured my entire lifestyle to minimize exposure to sin" }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'D',
-    title: 'Knowledge & Practice',
-    arabic: 'العلم والعمل',
-    description: 'Engagement with recommended and disputed acts',
-    questions: [
-      {
-        id: 'D1',
-        text: "How do you approach acts where scholars differ (duʿāʾ after prayer, mawlid)?",
-        options: [
-          { value: 0, label: "I don't know about these differences" },
-          { value: 1, label: 'I avoid anything with any scholarly dispute' },
-          { value: 2, label: "I'm cautious but occasionally participate" },
-          { value: 3, label: 'I participate in acts that trustworthy scholars permit' },
-          { value: 4, label: 'I actively seek recommended acts even if some dispute them' },
-          { value: 5, label: 'I follow valid positions while respecting those who differ' }
-        ]
-      },
-      {
-        id: 'D2',
-        text: 'How consistent are you with voluntary worship (nawāfil)?',
-        options: [
-          { value: 0, label: "I don't do voluntary worship" },
-          { value: 1, label: 'I occasionally do nawāfil when I feel like it' },
-          { value: 2, label: 'I have some regular nawāfil (sunnah prayers)' },
-          { value: 3, label: "I'm consistent with several nawāfil" },
-          { value: 4, label: 'I have a structured wird I maintain' },
-          { value: 5, label: 'I have extensive awrād and constantly seek to increase' }
-        ]
-      },
-      {
-        id: 'D3',
-        text: 'How actively do you pursue Islamic knowledge?',
-        options: [
-          { value: 0, label: "I don't actively seek knowledge" },
-          { value: 1, label: 'I learn passively (khutbahs, occasional videos)' },
-          { value: 2, label: 'I occasionally read or attend classes' },
-          { value: 3, label: 'I regularly read Islamic books or attend study circles' },
-          { value: 4, label: "I'm actively studying with teachers" },
-          { value: 5, label: 'Knowledge-seeking is a primary occupation' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'E',
-    title: 'Internal States',
-    arabic: 'أحوال القلب',
-    description: "The heart's condition",
-    questions: [
-      {
-        id: 'E1',
-        text: 'What is your typical internal state during ṣalāh?',
-        options: [
-          { value: 0, label: 'I rush through without much thought' },
-          { value: 1, label: 'My mind wanders constantly' },
-          { value: 2, label: 'I have some focus but frequent distraction' },
-          { value: 3, label: "I'm generally focused with occasional wandering" },
-          { value: 4, label: "I'm usually present and connected" },
-          { value: 5, label: "I experience deep khushūʿ and presence with Allah" }
-        ]
-      },
-      {
-        id: 'E2',
-        text: 'How often do you remember Allah outside of formal worship?',
-        options: [
-          { value: 0, label: 'Rarely' },
-          { value: 1, label: 'A few times a day' },
-          { value: 2, label: 'Several times throughout the day' },
-          { value: 3, label: 'Frequently — I do adhkār morning/evening' },
-          { value: 4, label: 'Very often — Allah is frequently on my tongue and heart' },
-          { value: 5, label: 'Almost constantly — dhikr is my default state' }
-        ]
-      },
-      {
-        id: 'E3',
-        text: 'When difficulties come, what is your internal response?',
-        options: [
-          { value: 0, label: 'Anger, despair, or complaint against Allah' },
-          { value: 1, label: 'Frustration and difficulty accepting' },
-          { value: 2, label: 'Initial struggle but eventual acceptance' },
-          { value: 3, label: 'Acceptance with patience (ṣabr)' },
-          { value: 4, label: 'Acceptance with contentment (riḍā)' },
-          { value: 5, label: 'Acceptance with gratitude (shukr)' }
-        ]
-      },
-      {
-        id: 'E4',
-        text: 'What primarily motivates your worship?',
-        options: [
-          { value: 0, label: "I don't think about motivation" },
-          { value: 1, label: 'Fear of punishment' },
-          { value: 2, label: 'Fear mixed with hope for reward' },
-          { value: 3, label: 'Hope for reward primarily' },
-          { value: 4, label: 'Love of Allah with hope and fear' },
-          { value: 5, label: 'Overwhelming love — I worship because He deserves it' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'F',
-    title: 'Character & Relations',
-    arabic: 'الأخلاق والمعاملات',
-    description: 'Outward character and dealings',
-    questions: [
-      {
-        id: 'F1',
-        text: 'How do you generally treat people?',
-        options: [
-          { value: 0, label: "I'm often harsh, dismissive, or unkind" },
-          { value: 1, label: "I'm decent to those I like, not so much to others" },
-          { value: 2, label: 'I try to be polite but have frequent conflicts' },
-          { value: 3, label: "I'm generally kind and avoid harming others" },
-          { value: 4, label: 'I actively try to benefit others and overlook faults' },
-          { value: 5, label: 'I embody iḥsān — treating everyone with excellence' }
-        ]
-      },
-      {
-        id: 'F2',
-        text: 'How do you respond to Muslims who follow different valid opinions?',
-        options: [
-          { value: 0, label: 'I consider them wrong or misguided' },
-          { value: 1, label: "I'm uncomfortable with differences" },
-          { value: 2, label: 'I tolerate differences reluctantly' },
-          { value: 3, label: 'I accept that valid differences exist' },
-          { value: 4, label: "I respect differences and don't judge" },
-          { value: 5, label: 'I see beauty in ikhtilāf and pray for all Muslims' }
-        ]
-      },
-      {
-        id: 'F3',
-        text: 'How much do you serve others (family, community, humanity)?',
-        options: [
-          { value: 0, label: 'I focus on myself' },
-          { value: 1, label: "I help when it's convenient" },
-          { value: 2, label: 'I help family regularly' },
-          { value: 3, label: 'I help family and occasionally community' },
-          { value: 4, label: 'I regularly serve family, community, and beyond' },
-          { value: 5, label: 'Service is a core part of my identity' }
-        ]
-      }
-    ]
-  }
-];
+// ============================================
+// BILINGUAL CONTENT (English & Urdu)
+// ============================================
 
-const stations = {
-  1: {
-    name: 'Complete Negligence',
-    arabic: 'التفريط التام',
-    category: 'dhalim',
-    categoryName: 'Ẓālim li-Nafsihi',
-    categoryArabic: 'ظالم لنفسه',
-    color: '#B87333',
-    figure: 'Fuḍayl ibn ʿIyāḍ',
-    figureStory: 'He was a highway robber. One night, climbing a wall to sin, he heard: "Has not the time come for hearts to be humbled?" He said, "Yes, Lord, the time has come." He became one of the greatest saints of Islam.',
-    currentState: "You've identified as Muslim but have largely abandoned the practices of Islam.",
-    goodNews: ['You are still Muslim — mercy is wide open', 'The Prophet ﷺ said the ẓālim "will be forgiven"', 'Many great Muslims started here'],
-    steps: ['Start with ONE prayer daily', 'Add a second prayer after one week', 'Set ONE prayer alarm', "Make duʿāʾ: 'O Allah, help me pray'"],
-    keyPrinciple: '"Don\'t despair of the mercy of Allah"',
-    description: "Doesn't even do the farāʾiḍ — but still Muslim",
-    shareEmoji: '🌱'
+const content = {
+  en: {
+    dir: 'ltr',
+    fontClass: '',
+    title: 'The Nine Maqāmāt',
+    subtitle: 'Self-Assessment',
+    tagline: 'A Tool for Spiritual Self-Reflection Based on al-Mawwaq\'s Sunan al-Muhtadīn',
+    preface: '"The real faqīh is the one who doesn\'t cause people to despair of the mercy of Allah."',
+    prefaceNote: 'This assessment is for personal reflection only — not for judging others.',
+    remember: [
+      'All nine stations are within the fold of Islam',
+      'All nine categories are people of Paradise',
+      'The street sweeper can be the wali of Allah',
+      'Only Allah knows our true station'
+    ],
+    honesty: 'Be honest with yourself. This tool works only with sincerity.',
+    startBtn: 'Begin Assessment',
+    section: 'Section',
+    next: 'Next Section',
+    previous: 'Previous',
+    complete: 'Complete Assessment',
+    answerAll: 'Please answer all questions',
+    results: {
+      title: 'Your Spiritual Station',
+      category: 'Category',
+      score: 'Total Score',
+      outOf: 'out of 110',
+      keyPrinciple: 'Key Principle',
+      example: 'Example',
+      inspiration: 'Historical Inspiration',
+      pathForward: 'Your Path Forward (Taraqqi)',
+      allParadise: 'All Nine Categories Are People of Paradise',
+      hadith: 'The Prophet ﷺ said: "Our outstripper (sābiq) is a true outstripper, our moderate one (muqtaṣid) has salvation, and the one who oppressed himself (ẓālim li-nafsihi) is going to be forgiven."',
+      faqih: '"The real faqīh is the one who doesn\'t cause people to despair of the mercy of Allah."'
+    },
+    buttons: {
+      share: '📤 Share Result',
+      download: '📥 Download Result',
+      explained: '📖 Maqāmāt Explained',
+      retake: '↺ Retake Assessment',
+      back: '← Back to Results',
+      downloading: 'Generating...'
+    },
+    footer: 'Based on Sunan al-Muhtadīn by Imam al-Mawwāq • As taught by Sheikh Hamza Yusuf',
+    langSwitch: 'اردو'
   },
-  2: {
-    name: 'Mixed Deeds',
-    arabic: 'خلطوا عملاً صالحاً وآخر سيئاً',
-    category: 'dhalim',
-    categoryName: 'Ẓālim li-Nafsihi',
-    categoryArabic: 'ظالم لنفسه',
-    color: '#A0522D',
-    figure: "ʿAmr ibn al-ʿĀṣ رضي الله عنه",
-    figureStory: "A late convert who mixed good and bad. On his deathbed, he asked companions to stay by his grave — his humility and awareness of his mixed state is a model.",
-    currentState: 'You do good deeds but mix them with sins. Your acknowledgment of sin is itself a mercy.',
-    goodNews: ['Allah mentions your category with hope', 'Acknowledgment of sin is a sign of faith', 'The struggle you feel IS the spiritual life'],
-    steps: ['Make five prayers non-negotiable', 'Identify your TOP 3 recurring sins', 'Work on eliminating ONE at a time', 'Find accountability'],
-    keyPrinciple: 'Perhaps Allah will make tawba on them',
-    description: 'Mixing good deeds with bad deeds — admits sins',
-    shareEmoji: '🌿'
-  },
-  3: {
-    name: 'The Riffraff',
-    arabic: 'الغوغاء',
-    category: 'dhalim',
-    categoryName: 'Ẓālim li-Nafsihi',
-    categoryArabic: 'ظالم لنفسه',
-    color: '#8B4513',
-    figure: "Pre-conversion ʿUmar رضي الله عنه",
-    figureStory: "Before Islam, ʿUmar wasn't the worst — just harsh and tribal, spending time without higher purpose. That same energy became al-Fārūq.",
-    currentState: "You maintain farāʾiḍ but much time is wasted in things of no benefit.",
-    goodNews: ['Your foundations are solid', "You're better than those who waste time AND sin", 'You just need to redirect existing time'],
-    steps: ['Track every hour for ONE week', "Convert 30% of 'wasted' to 'beneficial'", 'Add 10 min Quran after Fajr', 'Join ONE regular beneficial gathering'],
-    keyPrinciple: 'Wasting time in things of no harm and no benefit',
-    description: 'Wasting time in things of no benefit — but at least not sinning',
-    shareEmoji: '🌳'
-  },
-  4: {
-    name: 'The Lesser Evil',
-    arabic: 'دفع الأشد بالأخف',
-    category: 'muqtasid',
-    categoryName: 'Muqtaṣid',
-    categoryArabic: 'مقتصد',
-    color: '#46AF7D',
-    figure: 'The Minister of Fez',
-    figureStory: "A powerful minister had his sheikh make him sit on a garbage heap and beg. This 'lower' thing broke his ego — he became one of the great awliyāʾ of Morocco.",
-    currentState: "You think strategically — engaging in something lower can prevent something worse.",
-    goodNews: ["You've moved beyond mere compliance", "You're actively working on your heart", 'Your spiritual cause-and-effect awareness is awakening'],
-    steps: ['Make intention for EVERYTHING', 'Build a simple wird', 'Track wird consistency 30 days', 'Study purification of the heart'],
-    keyPrinciple: 'Doing something normally unacceptable to ward off something worse',
-    description: 'Doing lower things to ward off worse things',
-    shareEmoji: '🌲'
-  },
-  5: {
-    name: 'Ennobled Permissibles',
-    arabic: 'المباحات الشريفة',
-    category: 'muqtasid',
-    categoryName: 'Muqtaṣid',
-    categoryArabic: 'مقتصد',
-    color: '#3A9D6A',
-    figure: "ʿAbd al-Raḥmān ibn ʿAwf رضي الله عنه",
-    figureStory: "One of the ten promised Paradise, enormously wealthy — but his wealth was worship. He transformed commerce into ʿibādah through intention.",
-    currentState: "You transform ordinary activities into worship through intention.",
-    goodNews: ["You're living Islam in every moment", 'The mundane has become sacred', 'Your entire life is becoming worship'],
-    steps: ['Add disputed good deeds scholars recommend', 'Engage with ikhtilāf', "Learn your madhab's positions", 'Practice "this is valid, this is also valid"'],
-    keyPrinciple: 'No permissible thing except it can become noble through intention',
-    description: 'Permissible things that become noble deeds through intention',
-    shareEmoji: '🌴'
-  },
-  6: {
-    name: 'Disputed Virtues',
-    arabic: 'الفضائل المختلف فيها',
-    category: 'muqtasid',
-    categoryName: 'Muqtaṣid',
-    categoryArabic: 'مقتصد',
-    color: '#2E8B57',
-    figure: 'Imam al-Shāṭibī',
-    figureStory: 'The Andalusian scholar faced criticism for disputed positions. He wrote extensively defending legitimate ikhtilāf while respecting those who differed.',
-    currentState: "You engage in acts some call recommended, others permissible — following valid opinions without condemning others.",
-    goodNews: ["You're never below mubāḥ", 'You embody the tolerance the Prophet ﷺ wanted', 'You understand ikhtilāf is mercy'],
-    steps: ['Ask: "Is this the BEST use of my time?"', 'Learn relative ranks of good deeds', 'Protect your peak spiritual hours', 'Prioritize benefiting others'],
-    keyPrinciple: 'Never in anything less than mubāḥ with everybody',
-    description: 'Doing things disputed between being virtuous vs. permissible',
-    shareEmoji: '🌾'
-  },
-  7: {
-    name: 'Important Things',
-    arabic: 'في المهم',
-    category: 'sabiq',
-    categoryName: 'Sābiq bil-Khayrāt',
-    categoryArabic: 'سابق بالخيرات',
-    color: '#B69419',
-    figure: 'Ibn Wahb',
-    figureStory: "In Mālik's circle, he got up to pray nāfila. Mālik stopped him: 'What you're going to is not more important than what you're in. This IS ʿibādah.'",
-    currentState: "You're consistently in something important — your time is purposeful.",
-    goodNews: ["You've internalized that learning IS action", 'Your life has purpose and direction', 'You can reach the ʿārifīn through intention'],
-    steps: ['Ask: "Is there something MORE important now?"', 'Learn the fiqh of priorities', "Study Ḥanẓala's hadith", 'Examine what MORE important thing you might be missing'],
-    keyPrinciple: 'Being in something important if not in what is more important',
-    description: 'In something important if not the more important',
-    shareEmoji: '⭐'
-  },
-  8: {
-    name: 'Hour by Hour',
-    arabic: 'ساعة وساعة',
-    category: 'sabiq',
-    categoryName: 'Sābiq bil-Khayrāt',
-    categoryArabic: 'سابق بالخيرات',
-    color: '#C5A028',
-    figure: 'Ḥanẓala رضي الله عنه',
-    figureStory: 'He said "Ḥanẓala has become a hypocrite!" — exalted with the Prophet ﷺ, then preoccupied with family. The Prophet ﷺ said: "Sāʿatun wa sāʿatun — a time for this, a time for that."',
-    currentState: 'You practice "a time for this, a time for that" — alternating between important and MORE important.',
-    goodNews: ['You recognize different spiritual states', 'Like Ḥanẓala, you feel the difference', 'If always exalted, angels would shake your hands'],
-    steps: ['Minimize gap between exalted and ordinary', 'Bring FULL presence to everything', 'Practice continuous dhikr', 'Spend more time with people of Station 9'],
-    keyPrinciple: 'A time for this, a time for that — alternating between states',
-    description: 'Either in something important OR something more important',
-    shareEmoji: '🌟'
-  },
-  9: {
-    name: "Station of the ʿĀrifīn",
-    arabic: 'مقام العارفين',
-    category: 'sabiq',
-    categoryName: 'Sābiq bil-Khayrāt',
-    categoryArabic: 'سابق بالخيرات',
-    color: '#D4AF37',
-    figure: 'Abu Bakr al-Ṣiddīq رضي الله عنه',
-    figureStory: "The Prophet ﷺ said: 'If Abu Bakr's īmān were weighed against the entire ummah, his would outweigh it.' Always in the optimal state.",
-    currentState: 'If death came now, you would not find anything you would want to increase.',
-    goodNews: ['This is the station of the knowers of Allah', "Al-Mawwāq: 'not in the capacity of the majority'", 'Even ʿārifūn slip — perfected only in prophets'],
-    steps: ["Never assume you've 'arrived'", 'See yourself as the least of Muslims', 'Your role is helping others climb', 'Your presence should elevate others'],
-    warning: "If you scored yourself here, you're probably not in it. The ʿārifūn see themselves as lowest.",
-    keyPrinciple: 'If surprised by death, would find nothing to increase',
-    description: 'Always doing the most important thing at every moment',
-    shareEmoji: '✨'
+  ur: {
+    dir: 'rtl',
+    fontClass: 'font-urdu',
+    title: 'نو مقامات',
+    subtitle: 'خود جائزہ',
+    tagline: 'امام الموّاق کی سنن المہتدین کی بنیاد پر روحانی خود شناسی کا آلہ',
+    preface: '"حقیقی فقیہ وہ ہے جو لوگوں کو اللہ کی رحمت سے مایوس نہیں کرتا۔"',
+    prefaceNote: 'یہ جائزہ صرف ذاتی غور و فکر کے لیے ہے — دوسروں کو جج کرنے کے لیے نہیں۔',
+    remember: [
+      'تمام نو مقامات اسلام کے دائرے میں ہیں',
+      'تمام نو زمرے جنت کے لوگ ہیں',
+      'صفائی کرنے والا بھی اللہ کا ولی ہو سکتا ہے',
+      'صرف اللہ ہمارے حقیقی مقام کو جانتا ہے'
+    ],
+    honesty: 'اپنے ساتھ ایمانداری سے پیش آئیں۔ یہ آلہ صرف اخلاص کے ساتھ کام کرتا ہے۔',
+    startBtn: 'جائزہ شروع کریں',
+    section: 'حصہ',
+    next: 'اگلا حصہ',
+    previous: 'پچھلا',
+    complete: 'جائزہ مکمل کریں',
+    answerAll: 'براہ کرم تمام سوالات کے جواب دیں',
+    results: {
+      title: 'آپ کا روحانی مقام',
+      category: 'زمرہ',
+      score: 'کل سکور',
+      outOf: '110 میں سے',
+      keyPrinciple: 'کلیدی اصول',
+      example: 'مثال',
+      inspiration: 'تاریخی تحریک',
+      pathForward: 'آپ کا راستہ آگے (ترقی)',
+      allParadise: 'تمام نو زمرے جنت کے لوگ ہیں',
+      hadith: 'نبی کریم ﷺ نے فرمایا: "ہمارا سابق حقیقی سابق ہے، ہمارا مقتصد نجات پانے والا ہے، اور جس نے اپنے آپ پر ظلم کیا وہ بخشا جائے گا۔"',
+      faqih: '"حقیقی فقیہ وہ ہے جو لوگوں کو اللہ کی رحمت سے مایوس نہیں کرتا۔"'
+    },
+    buttons: {
+      share: '📤 نتیجہ شیئر کریں',
+      download: '📥 نتیجہ ڈاؤن لوڈ کریں',
+      explained: '📖 مقامات کی وضاحت',
+      retake: '↺ دوبارہ جائزہ لیں',
+      back: '→ نتائج پر واپس',
+      downloading: 'بنایا جا رہا ہے...'
+    },
+    footer: 'امام الموّاق کی سنن المہتدین کی بنیاد پر • شیخ حمزہ یوسف کی تعلیمات',
+    langSwitch: 'English'
   }
 };
 
-const categoryInfo = {
-  sabiq: {
-    name: 'Sābiq bil-Khayrāt',
-    arabic: 'سابق بالخيرات',
-    meaning: 'Those Who Race to Good',
-    description: 'The highest three stations',
-    color: '#D4AF37',
-  },
-  muqtasid: {
-    name: 'Muqtaṣid',
-    arabic: 'مقتصد',
-    meaning: 'Those Who Are Moderate',
-    description: 'The middle three stations',
-    color: '#2E8B57',
-  },
-  dhalim: {
-    name: 'Ẓālim li-Nafsihi',
-    arabic: 'ظالم لنفسه',
-    meaning: 'Those Who Wrong Themselves',
-    description: 'The lowest three stations — yet still people of Paradise',
-    color: '#8B4513',
+// ============================================
+// SECTIONS DATA (Bilingual)
+// ============================================
+
+const sectionsData = {
+  en: [
+    {
+      id: 'foundations',
+      title: 'The Foundations',
+      arabic: 'الأساسيات',
+      description: 'Assessment of obligatory acts (Farā\'iḍ)',
+      questions: [
+        {
+          id: 'prayer',
+          text: 'How consistent are you with the five daily prayers?',
+          options: [
+            { value: 0, label: 'I rarely pray or have abandoned prayer almost entirely' },
+            { value: 1, label: 'I pray sometimes but miss many prayers regularly' },
+            { value: 2, label: 'I pray most prayers but frequently miss one or two daily' },
+            { value: 3, label: 'I pray all five but sometimes miss them (making up later)' },
+            { value: 4, label: 'I pray all five consistently, rarely missing any' },
+            { value: 5, label: 'I pray all five on time and add regular nawafil' }
+          ]
+        },
+        {
+          id: 'fasting',
+          text: 'How do you approach the obligatory fast of Ramadan?',
+          options: [
+            { value: 0, label: 'I don\'t fast Ramadan' },
+            { value: 1, label: 'I fast some days but not consistently' },
+            { value: 2, label: 'I fast most of Ramadan with some missed days (not made up)' },
+            { value: 3, label: 'I fast Ramadan completely, making up any missed days' },
+            { value: 4, label: 'I fast Ramadan and occasionally fast voluntary fasts' },
+            { value: 5, label: 'I fast Ramadan plus regular sunnah fasts' }
+          ]
+        },
+        {
+          id: 'zakat',
+          text: 'If zakat is obligatory on you, how do you handle it?',
+          options: [
+            { value: 0, label: 'I don\'t pay zakat even though it\'s obligatory on me' },
+            { value: 1, label: 'I pay zakat inconsistently or less than required' },
+            { value: 2, label: 'I pay zakat but without careful calculation' },
+            { value: 3, label: 'I pay zakat correctly and on time' },
+            { value: 4, label: 'I pay zakat and give regular sadaqah' },
+            { value: 5, label: 'I pay zakat, give regular sadaqah, and seek out those in need' }
+          ]
+        },
+        {
+          id: 'sins',
+          text: 'How would you describe your relationship with major sins?',
+          options: [
+            { value: 0, label: 'I\'m involved in major sins without concern' },
+            { value: 1, label: 'I commit major sins but feel guilty afterward' },
+            { value: 2, label: 'I struggle with major sins, making tawbah but relapsing' },
+            { value: 3, label: 'I avoid most major sins but slip occasionally' },
+            { value: 4, label: 'I consistently avoid major sins' },
+            { value: 5, label: 'I avoid major sins and am cautious about doubtful matters' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'time',
+      title: 'Time & Priorities',
+      arabic: 'الوقت والأولويات',
+      description: 'How you spend your time',
+      questions: [
+        {
+          id: 'leisure',
+          text: 'How do you typically spend your free time?',
+          options: [
+            { value: 0, label: 'Entertainment with no benefit (excessive gaming, social media)' },
+            { value: 1, label: 'Mostly entertainment with occasional beneficial activities' },
+            { value: 2, label: 'A mix of entertainment and beneficial activities' },
+            { value: 3, label: 'Mostly beneficial activities with some entertainment' },
+            { value: 4, label: 'Almost all time in beneficial activities' },
+            { value: 5, label: 'I consciously choose the MOST beneficial activity at each moment' }
+          ]
+        },
+        {
+          id: 'death_test',
+          text: 'If death came RIGHT NOW, how would you feel about what you\'re doing?',
+          options: [
+            { value: 0, label: 'I\'d be embarrassed or regretful' },
+            { value: 1, label: 'I\'d wish I was doing something better' },
+            { value: 2, label: 'I\'d feel okay — it\'s not bad, just not great' },
+            { value: 3, label: 'I\'d feel reasonably content' },
+            { value: 4, label: 'I\'d feel good — this is worthwhile' },
+            { value: 5, label: 'I\'d feel completely at peace — this is exactly what I should be doing' }
+          ]
+        },
+        {
+          id: 'priorities',
+          text: 'When choosing between activities, do you consider what\'s MORE important?',
+          options: [
+            { value: 0, label: 'I don\'t think about importance — I do what I feel like' },
+            { value: 1, label: 'I sometimes consider what\'s important' },
+            { value: 2, label: 'I usually choose important things over trivial things' },
+            { value: 3, label: 'I consistently choose important activities' },
+            { value: 4, label: 'I often weigh between important options to find what\'s MORE important' },
+            { value: 5, label: 'I habitually seek the MOST important thing I could be doing' }
+          ]
+        },
+        {
+          id: 'wasted',
+          text: 'In an average week, how many hours do you feel are truly "wasted"?',
+          options: [
+            { value: 0, label: '20+ hours' },
+            { value: 1, label: '15-20 hours' },
+            { value: 2, label: '10-15 hours' },
+            { value: 3, label: '5-10 hours' },
+            { value: 4, label: '2-5 hours' },
+            { value: 5, label: 'Less than 2 hours — I\'m intentional with almost all my time' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'intention',
+      title: 'Intention & Transformation',
+      arabic: 'النية والتحول',
+      description: 'The spiritual quality of your actions',
+      questions: [
+        {
+          id: 'niyyah',
+          text: 'How often do you consciously make intention (niyyah) before daily activities?',
+          options: [
+            { value: 0, label: 'Rarely — I just do things' },
+            { value: 1, label: 'Only before acts of worship' },
+            { value: 2, label: 'Sometimes before important activities' },
+            { value: 3, label: 'Often — I try to have good intentions' },
+            { value: 4, label: 'Usually — I consciously intend for Allah\'s sake' },
+            { value: 5, label: 'Almost always — eating, sleeping, working, everything is framed with intention' }
+          ]
+        },
+        {
+          id: 'transform',
+          text: 'Do you transform permissible activities into worship through intention?',
+          subtitle: 'Example: Eating to have strength for \'ibadah, sleeping to rest for tahajjud',
+          options: [
+            { value: 0, label: 'I never thought about this' },
+            { value: 1, label: 'I\'ve heard of this but don\'t practice it' },
+            { value: 2, label: 'I try occasionally' },
+            { value: 3, label: 'I do this somewhat regularly' },
+            { value: 4, label: 'I do this with most daily activities' },
+            { value: 5, label: 'This is my habitual state — almost everything is intentional worship' }
+          ]
+        },
+        {
+          id: 'lesser',
+          text: 'Do you consciously engage in "lesser" activities to prevent worse ones?',
+          subtitle: 'Example: Permissible entertainment to avoid haram',
+          options: [
+            { value: 0, label: 'I don\'t think strategically about avoiding sin' },
+            { value: 1, label: 'I try to avoid sin but don\'t use substitutes' },
+            { value: 2, label: 'I sometimes use this strategy' },
+            { value: 3, label: 'I regularly employ this principle' },
+            { value: 4, label: 'I actively plan my life around this principle' },
+            { value: 5, label: 'I\'ve structured my entire lifestyle to minimize exposure to sin' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'knowledge',
+      title: 'Knowledge & Practice',
+      arabic: 'العلم والعمل',
+      description: 'Engagement with learning and worship',
+      questions: [
+        {
+          id: 'disputed',
+          text: 'How do you approach acts where scholars differ?',
+          subtitle: 'e.g., du\'a after prayer, mawlid, group dhikr',
+          options: [
+            { value: 0, label: 'I don\'t know about these differences' },
+            { value: 1, label: 'I avoid anything with any scholarly dispute' },
+            { value: 2, label: 'I\'m cautious but occasionally participate' },
+            { value: 3, label: 'I participate in acts that trustworthy scholars permit' },
+            { value: 4, label: 'I actively seek out recommended acts even if some scholars dispute them' },
+            { value: 5, label: 'I follow valid scholarly positions while respecting those who differ' }
+          ]
+        },
+        {
+          id: 'nawafil',
+          text: 'How consistent are you with voluntary acts of worship?',
+          options: [
+            { value: 0, label: 'I don\'t do voluntary worship' },
+            { value: 1, label: 'I occasionally do nawafil when I feel like it' },
+            { value: 2, label: 'I have some regular nawafil (e.g., sunnah prayers)' },
+            { value: 3, label: 'I\'m consistent with several nawafil' },
+            { value: 4, label: 'I have a structured wird (daily practice) I maintain' },
+            { value: 5, label: 'I have extensive awrad and rarely miss them' }
+          ]
+        },
+        {
+          id: 'seeking',
+          text: 'How actively do you pursue Islamic knowledge?',
+          options: [
+            { value: 0, label: 'I don\'t actively seek knowledge' },
+            { value: 1, label: 'I learn passively (hearing khutbahs, occasional videos)' },
+            { value: 2, label: 'I occasionally read or attend classes' },
+            { value: 3, label: 'I regularly read Islamic books or attend study circles' },
+            { value: 4, label: 'I\'m actively studying with teachers or a structured curriculum' },
+            { value: 5, label: 'Knowledge-seeking is a primary occupation — I study daily' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'heart',
+      title: 'Internal States',
+      arabic: 'أحوال القلب',
+      description: 'The condition of your heart',
+      questions: [
+        {
+          id: 'khushu',
+          text: 'What is your typical internal state during salah?',
+          options: [
+            { value: 0, label: 'I rush through without much thought' },
+            { value: 1, label: 'My mind wanders constantly' },
+            { value: 2, label: 'I have some focus but frequent distraction' },
+            { value: 3, label: 'I\'m generally focused with occasional wandering' },
+            { value: 4, label: 'I\'m usually present and connected' },
+            { value: 5, label: 'I experience deep khushu\' and presence with Allah' }
+          ]
+        },
+        {
+          id: 'dhikr',
+          text: 'How often do you remember Allah outside of formal worship?',
+          options: [
+            { value: 0, label: 'Rarely' },
+            { value: 1, label: 'A few times a day' },
+            { value: 2, label: 'Several times throughout the day' },
+            { value: 3, label: 'Frequently — I do adhkar morning/evening' },
+            { value: 4, label: 'Very often — Allah is frequently on my tongue and heart' },
+            { value: 5, label: 'Almost constantly — dhikr is my default state' }
+          ]
+        },
+        {
+          id: 'qadr',
+          text: 'When difficulties come, what is your internal response?',
+          options: [
+            { value: 0, label: 'Anger, despair, or complaint against Allah' },
+            { value: 1, label: 'Frustration and difficulty accepting' },
+            { value: 2, label: 'Initial struggle but eventual acceptance' },
+            { value: 3, label: 'Acceptance with patience (sabr)' },
+            { value: 4, label: 'Acceptance with contentment (rida)' },
+            { value: 5, label: 'Acceptance with gratitude (shukr) — seeing wisdom in the trial' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'character',
+      title: 'Character & Relations',
+      arabic: 'الأخلاق والمعاملات',
+      description: 'How you treat others',
+      questions: [
+        {
+          id: 'treatment',
+          text: 'How do you generally treat people?',
+          options: [
+            { value: 0, label: 'I\'m often harsh, dismissive, or unkind' },
+            { value: 1, label: 'I\'m decent to those I like, not so much to others' },
+            { value: 2, label: 'I try to be polite but have frequent conflicts' },
+            { value: 3, label: 'I\'m generally kind and avoid harming others' },
+            { value: 4, label: 'I actively try to benefit others and overlook faults' },
+            { value: 5, label: 'I embody ihsan — treating everyone with excellence' }
+          ]
+        },
+        {
+          id: 'tolerance',
+          text: 'How do you respond to Muslims who follow different valid opinions?',
+          options: [
+            { value: 0, label: 'I consider them wrong or misguided' },
+            { value: 1, label: 'I\'m uncomfortable with differences' },
+            { value: 2, label: 'I tolerate differences reluctantly' },
+            { value: 3, label: 'I accept that valid differences exist' },
+            { value: 4, label: 'I respect differences and don\'t judge' },
+            { value: 5, label: 'I see beauty in ikhtilaf and pray for all Muslims' }
+          ]
+        },
+        {
+          id: 'service',
+          text: 'How much do you engage in serving others?',
+          options: [
+            { value: 0, label: 'I focus on myself' },
+            { value: 1, label: 'I help when it\'s convenient' },
+            { value: 2, label: 'I help family regularly' },
+            { value: 3, label: 'I help family and occasionally community' },
+            { value: 4, label: 'I regularly serve family, community, and beyond' },
+            { value: 5, label: 'Service is a core part of my identity' }
+          ]
+        }
+      ]
+    }
+  ],
+  ur: [
+    {
+      id: 'foundations',
+      title: 'بنیادی باتیں',
+      arabic: 'الأساسيات',
+      description: 'فرائض کا جائزہ',
+      questions: [
+        {
+          id: 'prayer',
+          text: 'آپ پانچ وقت کی نماز میں کتنے پابند ہیں؟',
+          options: [
+            { value: 0, label: 'میں شاذ و نادر ہی نماز پڑھتا ہوں یا تقریباً چھوڑ دی ہے' },
+            { value: 1, label: 'میں کبھی کبھار پڑھتا ہوں لیکن اکثر نمازیں چھوٹ جاتی ہیں' },
+            { value: 2, label: 'میں زیادہ تر نمازیں پڑھتا ہوں لیکن روزانہ ایک دو چھوٹ جاتی ہیں' },
+            { value: 3, label: 'میں پانچوں پڑھتا ہوں لیکن کبھی کبھار چھوٹ جاتی ہیں (بعد میں قضا کرتا ہوں)' },
+            { value: 4, label: 'میں پانچوں باقاعدگی سے پڑھتا ہوں، شاذ و نادر ہی چھوٹتی ہیں' },
+            { value: 5, label: 'میں پانچوں وقت پر پڑھتا ہوں اور نوافل بھی ادا کرتا ہوں' }
+          ]
+        },
+        {
+          id: 'fasting',
+          text: 'آپ رمضان کے فرض روزوں کے بارے میں کیا رویہ رکھتے ہیں؟',
+          options: [
+            { value: 0, label: 'میں رمضان کے روزے نہیں رکھتا' },
+            { value: 1, label: 'میں کچھ دن روزے رکھتا ہوں لیکن باقاعدگی سے نہیں' },
+            { value: 2, label: 'میں رمضان کے زیادہ تر روزے رکھتا ہوں کچھ چھوٹ جاتے ہیں (قضا نہیں)' },
+            { value: 3, label: 'میں پورے رمضان کے روزے رکھتا ہوں، چھوٹے ہوئے کی قضا کرتا ہوں' },
+            { value: 4, label: 'میں رمضان کے روزے رکھتا ہوں اور کبھی کبھار نفلی روزے بھی' },
+            { value: 5, label: 'میں رمضان کے علاوہ سنت روزے بھی رکھتا ہوں (پیر، جمعرات، ایام بیض)' }
+          ]
+        },
+        {
+          id: 'zakat',
+          text: 'اگر زکوٰۃ آپ پر فرض ہے تو آپ اسے کیسے ادا کرتے ہیں؟',
+          options: [
+            { value: 0, label: 'میں زکوٰۃ ادا نہیں کرتا حالانکہ فرض ہے' },
+            { value: 1, label: 'میں زکوٰۃ بے قاعدگی سے یا کم ادا کرتا ہوں' },
+            { value: 2, label: 'میں زکوٰۃ دیتا ہوں لیکن درست حساب کے بغیر' },
+            { value: 3, label: 'میں زکوٰۃ درست طریقے سے وقت پر ادا کرتا ہوں' },
+            { value: 4, label: 'میں زکوٰۃ اور باقاعدہ صدقہ دیتا ہوں' },
+            { value: 5, label: 'میں زکوٰۃ، صدقہ دیتا ہوں اور ضرورت مندوں کو تلاش کرتا ہوں' }
+          ]
+        },
+        {
+          id: 'sins',
+          text: 'کبیرہ گناہوں سے آپ کا کیا تعلق ہے؟',
+          options: [
+            { value: 0, label: 'میں کبیرہ گناہوں میں ملوث ہوں بغیر کسی فکر کے' },
+            { value: 1, label: 'میں کبیرہ گناہ کرتا ہوں لیکن بعد میں ندامت محسوس کرتا ہوں' },
+            { value: 2, label: 'میں کبیرہ گناہوں سے جدوجہد کرتا ہوں، توبہ کرتا ہوں پھر لوٹ آتا ہوں' },
+            { value: 3, label: 'میں زیادہ تر کبیرہ گناہوں سے بچتا ہوں لیکن کبھی کبھار ہو جاتا ہے' },
+            { value: 4, label: 'میں مسلسل کبیرہ گناہوں سے بچتا ہوں' },
+            { value: 5, label: 'میں کبیرہ گناہوں سے بچتا ہوں اور مشتبہ چیزوں سے بھی محتاط ہوں' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'time',
+      title: 'وقت اور ترجیحات',
+      arabic: 'الوقت والأولويات',
+      description: 'آپ اپنا وقت کیسے گزارتے ہیں',
+      questions: [
+        {
+          id: 'leisure',
+          text: 'آپ عموماً اپنا فارغ وقت کیسے گزارتے ہیں؟',
+          options: [
+            { value: 0, label: 'بے فائدہ تفریح (زیادہ گیمنگ، سوشل میڈیا)' },
+            { value: 1, label: 'زیادہ تر تفریح، کبھی کبھار فائدہ مند سرگرمیاں' },
+            { value: 2, label: 'تفریح اور فائدہ مند سرگرمیوں کا مرکب' },
+            { value: 3, label: 'زیادہ تر فائدہ مند سرگرمیاں، کچھ تفریح' },
+            { value: 4, label: 'تقریباً سارا وقت فائدہ مند سرگرمیوں میں' },
+            { value: 5, label: 'میں شعوری طور پر ہر لمحے سب سے زیادہ فائدہ مند کام چنتا ہوں' }
+          ]
+        },
+        {
+          id: 'death_test',
+          text: 'اگر ابھی موت آ جائے تو آپ جو کر رہے ہیں اس پر کیسا محسوس کریں گے؟',
+          options: [
+            { value: 0, label: 'شرمندگی یا پچھتاوا' },
+            { value: 1, label: 'کاش کچھ بہتر کر رہا ہوتا' },
+            { value: 2, label: 'ٹھیک ہے — برا نہیں، بہت اچھا بھی نہیں' },
+            { value: 3, label: 'کافی مطمئن' },
+            { value: 4, label: 'اچھا — یہ قابل قدر ہے' },
+            { value: 5, label: 'مکمل سکون — یہی کرنا چاہیے تھا' }
+          ]
+        },
+        {
+          id: 'priorities',
+          text: 'سرگرمیوں میں انتخاب کرتے وقت کیا آپ "زیادہ اہم" پر غور کرتے ہیں؟',
+          options: [
+            { value: 0, label: 'میں اہمیت کے بارے میں نہیں سوچتا — جو دل چاہے کرتا ہوں' },
+            { value: 1, label: 'کبھی کبھار اہمیت پر غور کرتا ہوں' },
+            { value: 2, label: 'عموماً اہم چیزیں معمولی سے پہلے چنتا ہوں' },
+            { value: 3, label: 'مسلسل اہم سرگرمیاں چنتا ہوں' },
+            { value: 4, label: 'اکثر اہم آپشنز میں "زیادہ اہم" تلاش کرتا ہوں' },
+            { value: 5, label: 'عادتاً "سب سے زیادہ اہم" کام تلاش کرتا ہوں' }
+          ]
+        },
+        {
+          id: 'wasted',
+          text: 'اوسطاً ہفتے میں کتنے گھنٹے "ضائع" ہوتے ہیں؟',
+          options: [
+            { value: 0, label: '20+ گھنٹے' },
+            { value: 1, label: '15-20 گھنٹے' },
+            { value: 2, label: '10-15 گھنٹے' },
+            { value: 3, label: '5-10 گھنٹے' },
+            { value: 4, label: '2-5 گھنٹے' },
+            { value: 5, label: '2 گھنٹے سے کم — میں تقریباً سارے وقت کا مقصد رکھتا ہوں' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'intention',
+      title: 'نیت اور تبدیلی',
+      arabic: 'النية والتحول',
+      description: 'آپ کے اعمال کی روحانی کیفیت',
+      questions: [
+        {
+          id: 'niyyah',
+          text: 'روزمرہ کاموں سے پہلے کتنی بار شعوری نیت کرتے ہیں؟',
+          options: [
+            { value: 0, label: 'شاذ و نادر — بس کر لیتا ہوں' },
+            { value: 1, label: 'صرف عبادت سے پہلے' },
+            { value: 2, label: 'کبھی کبھار اہم کاموں سے پہلے' },
+            { value: 3, label: 'اکثر — اچھی نیت رکھنے کی کوشش کرتا ہوں' },
+            { value: 4, label: 'عموماً — شعوری طور پر اللہ کے لیے نیت کرتا ہوں' },
+            { value: 5, label: 'تقریباً ہمیشہ — کھانا، سونا، کام، سب کچھ نیت کے ساتھ' }
+          ]
+        },
+        {
+          id: 'transform',
+          text: 'کیا آپ مباح کاموں کو نیت سے عبادت میں بدلتے ہیں؟',
+          subtitle: 'مثال: عبادت کی طاقت کے لیے کھانا، تہجد کے لیے سونا',
+          options: [
+            { value: 0, label: 'میں نے اس بارے میں کبھی نہیں سوچا' },
+            { value: 1, label: 'سنا ہے لیکن عمل نہیں کرتا' },
+            { value: 2, label: 'کبھی کبھار کوشش کرتا ہوں' },
+            { value: 3, label: 'کافی باقاعدگی سے کرتا ہوں' },
+            { value: 4, label: 'زیادہ تر روزمرہ کاموں میں کرتا ہوں' },
+            { value: 5, label: 'یہ میری عادت ہے — تقریباً سب کچھ عبادت ہے' }
+          ]
+        },
+        {
+          id: 'lesser',
+          text: 'کیا آپ "کم" کاموں سے "بدتر" سے بچنے کی کوشش کرتے ہیں؟',
+          subtitle: 'مثال: حرام سے بچنے کے لیے مباح تفریح',
+          options: [
+            { value: 0, label: 'میں گناہ سے بچنے کی حکمت عملی نہیں سوچتا' },
+            { value: 1, label: 'گناہ سے بچنے کی کوشش کرتا ہوں لیکن متبادل نہیں' },
+            { value: 2, label: 'کبھی کبھار یہ حکمت عملی استعمال کرتا ہوں' },
+            { value: 3, label: 'باقاعدگی سے یہ اصول استعمال کرتا ہوں' },
+            { value: 4, label: 'اپنی زندگی کی منصوبہ بندی اسی اصول پر کرتا ہوں' },
+            { value: 5, label: 'میں نے اپنی پوری طرز زندگی گناہ سے بچنے کے لیے ترتیب دی ہے' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'knowledge',
+      title: 'علم اور عمل',
+      arabic: 'العلم والعمل',
+      description: 'سیکھنے اور عبادت میں مشغولیت',
+      questions: [
+        {
+          id: 'disputed',
+          text: 'جن معاملات میں علماء کا اختلاف ہے ان کے بارے میں آپ کا رویہ کیا ہے؟',
+          subtitle: 'مثلاً: نماز کے بعد دعا، میلاد، اجتماعی ذکر',
+          options: [
+            { value: 0, label: 'مجھے ان اختلافات کا علم نہیں' },
+            { value: 1, label: 'جس میں بھی اختلاف ہو اس سے بچتا ہوں' },
+            { value: 2, label: 'محتاط ہوں لیکن کبھی کبھار شامل ہوتا ہوں' },
+            { value: 3, label: 'جو معتبر علماء اجازت دیں اس میں شامل ہوتا ہوں' },
+            { value: 4, label: 'مستحب اعمال تلاش کرتا ہوں چاہے کچھ علماء اختلاف کریں' },
+            { value: 5, label: 'درست علمی موقف کی پیروی کرتا ہوں اور مختلف رائے کا احترام کرتا ہوں' }
+          ]
+        },
+        {
+          id: 'nawafil',
+          text: 'نفلی عبادات میں آپ کتنے پابند ہیں؟',
+          options: [
+            { value: 0, label: 'میں نفلی عبادت نہیں کرتا' },
+            { value: 1, label: 'جب دل چاہے کبھی کبھار نوافل پڑھتا ہوں' },
+            { value: 2, label: 'کچھ باقاعدہ نوافل ہیں (مثلاً سنت نمازیں)' },
+            { value: 3, label: 'کئی نوافل میں پابند ہوں' },
+            { value: 4, label: 'ایک مرتب ورد ہے جسے برقرار رکھتا ہوں' },
+            { value: 5, label: 'وسیع اوراد ہیں اور شاذ و نادر ہی چھوڑتا ہوں' }
+          ]
+        },
+        {
+          id: 'seeking',
+          text: 'آپ اسلامی علم کتنی فعالی سے حاصل کرتے ہیں؟',
+          options: [
+            { value: 0, label: 'میں فعال طور پر علم حاصل نہیں کرتا' },
+            { value: 1, label: 'غیر فعال طور پر سیکھتا ہوں (خطبے، کبھی کبھار ویڈیوز)' },
+            { value: 2, label: 'کبھی کبھار پڑھتا ہوں یا کلاسز میں جاتا ہوں' },
+            { value: 3, label: 'باقاعدگی سے اسلامی کتابیں پڑھتا ہوں یا درس میں جاتا ہوں' },
+            { value: 4, label: 'استاد کے ساتھ یا منظم نصاب میں پڑھ رہا ہوں' },
+            { value: 5, label: 'علم حاصل کرنا بنیادی مشغلہ ہے — روزانہ پڑھتا ہوں' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'heart',
+      title: 'دل کے احوال',
+      arabic: 'أحوال القلب',
+      description: 'آپ کے دل کی کیفیت',
+      questions: [
+        {
+          id: 'khushu',
+          text: 'نماز میں آپ کی عام داخلی کیفیت کیا ہوتی ہے؟',
+          options: [
+            { value: 0, label: 'جلدی جلدی پڑھ لیتا ہوں بغیر زیادہ سوچے' },
+            { value: 1, label: 'ذہن مسلسل بھٹکتا رہتا ہے' },
+            { value: 2, label: 'کچھ توجہ ہوتی ہے لیکن اکثر بھٹکاؤ' },
+            { value: 3, label: 'عموماً توجہ رہتی ہے، کبھی کبھار بھٹکاؤ' },
+            { value: 4, label: 'عموماً حاضر اور متصل رہتا ہوں' },
+            { value: 5, label: 'گہرا خشوع اور اللہ کے ساتھ حضوری محسوس کرتا ہوں' }
+          ]
+        },
+        {
+          id: 'dhikr',
+          text: 'باقاعدہ عبادت کے علاوہ اللہ کو کتنی بار یاد کرتے ہیں؟',
+          options: [
+            { value: 0, label: 'شاذ و نادر' },
+            { value: 1, label: 'دن میں چند بار' },
+            { value: 2, label: 'دن بھر میں کئی بار' },
+            { value: 3, label: 'اکثر — صبح شام اذکار کرتا ہوں' },
+            { value: 4, label: 'بہت زیادہ — اللہ کا ذکر زبان اور دل پر رہتا ہے' },
+            { value: 5, label: 'تقریباً مسلسل — ذکر میری عادت ہے' }
+          ]
+        },
+        {
+          id: 'qadr',
+          text: 'مشکلات آنے پر آپ کا داخلی ردعمل کیا ہوتا ہے؟',
+          options: [
+            { value: 0, label: 'غصہ، مایوسی، یا اللہ سے شکایت' },
+            { value: 1, label: 'پریشانی اور قبول کرنے میں مشکل' },
+            { value: 2, label: 'پہلے جدوجہد پھر آخرکار قبول' },
+            { value: 3, label: 'صبر کے ساتھ قبول' },
+            { value: 4, label: 'رضا کے ساتھ قبول' },
+            { value: 5, label: 'شکر کے ساتھ قبول — آزمائش میں حکمت دیکھتا ہوں' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'character',
+      title: 'اخلاق اور معاملات',
+      arabic: 'الأخلاق والمعاملات',
+      description: 'آپ دوسروں کے ساتھ کیسے پیش آتے ہیں',
+      questions: [
+        {
+          id: 'treatment',
+          text: 'عموماً آپ لوگوں کے ساتھ کیسے پیش آتے ہیں؟',
+          options: [
+            { value: 0, label: 'اکثر سخت، نظرانداز کرنے والا، یا بدتمیز' },
+            { value: 1, label: 'جو پسند ہیں ان سے اچھا، دوسروں سے نہیں' },
+            { value: 2, label: 'شائستہ رہنے کی کوشش لیکن اکثر تنازعات' },
+            { value: 3, label: 'عموماً مہربان اور دوسروں کو نقصان سے بچاتا ہوں' },
+            { value: 4, label: 'فعال طور پر دوسروں کو فائدہ پہنچاتا اور غلطیاں معاف کرتا ہوں' },
+            { value: 5, label: 'احسان کرتا ہوں — سب کے ساتھ عمدگی سے پیش آتا ہوں' }
+          ]
+        },
+        {
+          id: 'tolerance',
+          text: 'جو مسلمان مختلف درست آراء پر عمل کرتے ہیں ان کے بارے میں کیا رویہ ہے؟',
+          options: [
+            { value: 0, label: 'انہیں غلط یا گمراہ سمجھتا ہوں' },
+            { value: 1, label: 'اختلافات سے بے چینی محسوس کرتا ہوں' },
+            { value: 2, label: 'بادل نخواستہ اختلاف برداشت کرتا ہوں' },
+            { value: 3, label: 'قبول کرتا ہوں کہ درست اختلاف ہو سکتا ہے' },
+            { value: 4, label: 'اختلاف کا احترام کرتا ہوں اور فیصلہ نہیں کرتا' },
+            { value: 5, label: 'اختلاف میں خوبصورتی دیکھتا ہوں اور سب مسلمانوں کے لیے دعا کرتا ہوں' }
+          ]
+        },
+        {
+          id: 'service',
+          text: 'دوسروں کی خدمت میں کتنے مشغول ہیں؟',
+          options: [
+            { value: 0, label: 'اپنے آپ پر توجہ دیتا ہوں' },
+            { value: 1, label: 'جب آسان ہو مدد کرتا ہوں' },
+            { value: 2, label: 'خاندان کی باقاعدگی سے مدد کرتا ہوں' },
+            { value: 3, label: 'خاندان اور کبھی کبھار کمیونٹی کی مدد' },
+            { value: 4, label: 'خاندان، کمیونٹی اور اس سے آگے باقاعدگی سے خدمت' },
+            { value: 5, label: 'خدمت میری شناخت کا بنیادی حصہ ہے' }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// ============================================
+// STATIONS DATA (Bilingual)
+// ============================================
+
+const stationsData = {
+  en: [
+    { id: 9, category: 'sabiq', categoryName: 'Sābiq bil-Khayrāt', categoryArabic: 'سابق بالخيرات', categoryMeaning: 'Those Who Race to Good', name: "Station of the 'Ārifīn", arabic: 'مقام العارفين', description: 'Always doing the most important thing at every moment', keyPrinciple: 'If surprised by death, would find nothing concerning the truth they would want to increase', example: 'The knowers of Allah who are always in the optimal state', inspiration: 'Abu Bakr al-Siddiq رضي الله عنه — first to accept, first to sacrifice, first in everything', taraqqi: 'Constant vigilance. Never assume you\'ve arrived. Continue to see yourself as the least of Muslims. Your primary role is helping others climb.', color: '#D4AF37', shareEmoji: '🌟' },
+    { id: 8, category: 'sabiq', categoryName: 'Sābiq bil-Khayrāt', categoryArabic: 'سابق بالخيرات', categoryMeaning: 'Those Who Race to Good', name: "Sa'āt wa Sa'āt", arabic: 'ساعة وساعة', description: 'Either in something important OR something more important', keyPrinciple: 'A time for this, a time for that — alternating between the important and the more important', example: "Ḥanẓala's experience: exalted with the Prophet ﷺ, then occupied with family/farms", inspiration: 'Ḥanẓala رضي الله عنه — felt like a hypocrite for not maintaining the highest state constantly', taraqqi: 'Minimize the gap between exalted and ordinary states. Practice dhikr continuously. Before switching modes, make intention.', color: '#C5A028', shareEmoji: '⭐' },
+    { id: 7, category: 'sabiq', categoryName: 'Sābiq bil-Khayrāt', categoryArabic: 'سابق بالخيرات', categoryMeaning: 'Those Who Race to Good', name: 'Being in Something Important', arabic: 'في المهم', description: 'In something important if not in what is more important', keyPrinciple: "For the 'ulamā' of the aḥkām — scholars of rulings", example: "Ibn Wahb leaving prayer to study — Mālik said studying IS 'ibāda if intention is sound", inspiration: 'Ibn Wahb — student of Mālik who understood knowledge as worship', taraqqi: 'Begin asking: "Is there something MORE important right now?" Learn the fiqh of priorities. Study Imam al-\'Izz ibn \'Abd al-Salam\'s work.', color: '#B69419', shareEmoji: '✨' },
+    { id: 6, category: 'muqtasid', categoryName: 'Muqtaṣid', categoryArabic: 'مقتصد', categoryMeaning: 'Those Who Are Moderate', name: 'Disputed Virtues', arabic: 'الفضائل المختلف فيها', description: 'Doing things that are disputed between being virtuous vs. permissible', keyPrinciple: 'Never in anything less than mubāḥ (permissible) with everybody', example: "Du'ā' after prayer — makrūh to some, mandūb to others", inspiration: 'Imam al-Shāṭibī — defended legitimate ikhtilaf while maintaining respect for those who differed', taraqqi: 'Begin asking not just "Is this permitted?" but "Is this the BEST use of my time right now?" Time segmentation.', color: '#2E8B57', shareEmoji: '🌿' },
+    { id: 5, category: 'muqtasid', categoryName: 'Muqtaṣid', categoryArabic: 'مقتصد', categoryMeaning: 'Those Who Are Moderate', name: 'Ennobled Permissibles', arabic: 'المباحات الشريفة', description: 'Permissible things that become noble deeds through intention', keyPrinciple: 'There is no permissible thing except it can become a noble deed through intention', example: 'Sleeping to rest for future worship, eating to strengthen for obedience', inspiration: "'Abd al-Rahman ibn 'Awf رضي الله عنه — transformed commerce into 'ibadah", taraqqi: 'Begin adding disputed good deeds that trustworthy scholars recommend. Engage with ikhtilaf. Study fiqh differences.', color: '#3A9D6A', shareEmoji: '🍃' },
+    { id: 4, category: 'muqtasid', categoryName: 'Muqtaṣid', categoryArabic: 'مقتصد', categoryMeaning: 'Those Who Are Moderate', name: 'Lesser Evil', arabic: 'دفع الأشد بالأخف', description: 'Doing lower things to ward off worse things', keyPrinciple: 'No maṣlaḥa can be good unless it wards off a worse thing', example: 'Mālik: "If sitting on a garbage heap would rectify my heart, I would do it"', inspiration: 'The Minister of Fez — broke his ego by begging on a garbage heap, became a great wali', taraqqi: 'The Intention Revolution: consciously make intention for EVERYTHING. Build your wird. Study purification of the heart.', color: '#46AF7D', shareEmoji: '🌱' },
+    { id: 3, category: 'dhalim', categoryName: 'Ẓālim li-Nafsihi', categoryArabic: 'ظالم لنفسه', categoryMeaning: 'Those Who Wrong Themselves', name: 'The Riffraff', arabic: 'الغوغاء', description: 'Wasting time in things of no benefit — but at least not sinning', keyPrinciple: 'No ḥisba (commanding good) with them — just leave them alone', example: 'Watching TV but stops for prayer. Playing video games but still prays.', inspiration: "Pre-conversion 'Umar رضي الله عنه — his energy later transformed into becoming al-Farooq", taraqqi: 'Time Audit: track how you spend every hour for one week. Strategic Swap: convert 30% of wasted time to beneficial.', color: '#8B4513', shareEmoji: '🌾' },
+    { id: 2, category: 'dhalim', categoryName: 'Ẓālim li-Nafsihi', categoryArabic: 'ظالم لنفسه', categoryMeaning: 'Those Who Wrong Themselves', name: 'Mixed Deeds', arabic: 'خلطوا عملاً صالحاً وآخر سيئاً', description: 'Mixing good deeds with bad deeds — admits sins', keyPrinciple: 'Perhaps Allah will make tawba on them', example: 'Committing sins but acknowledging them, doing some good alongside the bad', inspiration: "'Amr ibn al-'As رضي الله عنه — asked companions to stay by his grave for support", taraqqi: 'Stabilize the foundations. Identify TOP 3 recurring sins. Work on eliminating ONE at a time. Replace, don\'t just remove.', color: '#A0522D', shareEmoji: '🌻' },
+    { id: 1, category: 'dhalim', categoryName: 'Ẓālim li-Nafsihi', categoryArabic: 'ظالم لنفسه', categoryMeaning: 'Those Who Wrong Themselves', name: 'Completely Wasted Life', arabic: 'التفريط التام', description: "Doesn't even do the farā'iḍ — but still Muslim", keyPrinciple: '"Don\'t despair of the mercy of Allah"', example: "Doesn't pray, fast is neglected, might not pay zakat — but says 'I am Muslim'", inspiration: 'Fuḍayl ibn \'Iyād — highway robber who heard Quran and transformed completely', taraqqi: 'Start with ONE prayer daily. The 40-Day Challenge. Don\'t despair — every moment is a new opportunity.', color: '#B87333', shareEmoji: '🌅' }
+  ],
+  ur: [
+    { id: 9, category: 'sabiq', categoryName: 'سابق بالخیرات', categoryArabic: 'سابق بالخيرات', categoryMeaning: 'نیکیوں میں آگے بڑھنے والے', name: 'عارفین کا مقام', arabic: 'مقام العارفين', description: 'ہر لمحے سب سے اہم کام کرنا', keyPrinciple: 'اگر موت اچانک آ جائے تو حق کے بارے میں کوئی کمی محسوس نہ ہو', example: 'اللہ کے عارفین جو ہمیشہ بہترین حالت میں رہتے ہیں', inspiration: 'ابوبکر صدیق رضی اللہ عنہ — قبول کرنے میں اول، قربانی میں اول، ہر چیز میں اول', taraqqi: 'مسلسل چوکنا رہیں۔ کبھی نہ سمجھیں کہ پہنچ گئے۔ خود کو سب سے کم مسلمان سمجھیں۔ دوسروں کی مدد کرنا آپ کا کام ہے۔', color: '#D4AF37', shareEmoji: '🌟' },
+    { id: 8, category: 'sabiq', categoryName: 'سابق بالخیرات', categoryArabic: 'سابق بالخيرات', categoryMeaning: 'نیکیوں میں آگے بڑھنے والے', name: 'ساعت و ساعت', arabic: 'ساعة وساعة', description: 'یا تو اہم کام میں یا زیادہ اہم کام میں', keyPrinciple: 'اس کے لیے وقت، اس کے لیے وقت — اہم اور زیادہ اہم کے درمیان', example: 'حنظلہ کا تجربہ: نبی ﷺ کے ساتھ بلند حالت، پھر گھر کے کاموں میں', inspiration: 'حنظلہ رضی اللہ عنہ — بلند حالت برقرار نہ رکھنے پر منافق محسوس کیا', taraqqi: 'بلند اور عام حالتوں کے درمیان فرق کم کریں۔ مسلسل ذکر کریں۔ حالت بدلنے سے پہلے نیت کریں۔', color: '#C5A028', shareEmoji: '⭐' },
+    { id: 7, category: 'sabiq', categoryName: 'سابق بالخیرات', categoryArabic: 'سابق بالخيرات', categoryMeaning: 'نیکیوں میں آگے بڑھنے والے', name: 'اہم کام میں ہونا', arabic: 'في المهم', description: 'اگر زیادہ اہم میں نہیں تو کم از کم اہم میں', keyPrinciple: 'احکام کے علماء کے لیے', example: 'ابن وہب کا نماز چھوڑ کر پڑھائی کرنا — مالک نے کہا پڑھائی بھی عبادت ہے اگر نیت صحیح ہو', inspiration: 'ابن وہب — امام مالک کے شاگرد جنہوں نے علم کو عبادت سمجھا', taraqqi: 'پوچھنا شروع کریں: "کیا ابھی کوئی زیادہ اہم کام ہے؟" ترجیحات کی فقہ سیکھیں۔', color: '#B69419', shareEmoji: '✨' },
+    { id: 6, category: 'muqtasid', categoryName: 'مقتصد', categoryArabic: 'مقتصد', categoryMeaning: 'میانہ رو', name: 'متنازعہ فضائل', arabic: 'الفضائل المختلف فيها', description: 'جن کے فضیلت یا جواز میں اختلاف ہو', keyPrinciple: 'کبھی مباح سے کم میں نہیں', example: 'نماز کے بعد دعا — کچھ کے نزدیک مکروہ، کچھ کے نزدیک مستحب', inspiration: 'امام شاطبی — جائز اختلاف کا دفاع کیا', taraqqi: 'صرف "کیا یہ جائز ہے؟" نہیں بلکہ "کیا یہ میرے وقت کا بہترین استعمال ہے؟" پوچھیں۔', color: '#2E8B57', shareEmoji: '🌿' },
+    { id: 5, category: 'muqtasid', categoryName: 'مقتصد', categoryArabic: 'مقتصد', categoryMeaning: 'میانہ رو', name: 'شریف مباحات', arabic: 'المباحات الشريفة', description: 'مباح چیزیں جو نیت سے نیک کام بن جائیں', keyPrinciple: 'کوئی مباح نہیں جو نیت سے نیکی نہ بن سکے', example: 'عبادت کے لیے سونا، اطاعت کے لیے کھانا', inspiration: 'عبدالرحمن بن عوف رضی اللہ عنہ — تجارت کو عبادت بنایا', taraqqi: 'معتبر علماء کے تجویز کردہ اعمال شامل کریں۔ اختلاف کو سمجھیں۔', color: '#3A9D6A', shareEmoji: '🍃' },
+    { id: 4, category: 'muqtasid', categoryName: 'مقتصد', categoryArabic: 'مقتصد', categoryMeaning: 'میانہ رو', name: 'کم برائی', arabic: 'دفع الأشد بالأخف', description: 'بڑی برائی سے بچنے کے لیے چھوٹی چیز کرنا', keyPrinciple: 'کوئی مصلحت اچھی نہیں جب تک بڑی برائی نہ روکے', example: 'مالک: "اگر کوڑے کے ڈھیر پر بیٹھنے سے دل درست ہو تو بیٹھ جاؤں"', inspiration: 'فاس کا وزیر — تکبر توڑنے کے لیے بھیک مانگی، عظیم ولی بنا', taraqqi: 'نیت کا انقلاب: ہر چیز کے لیے شعوری نیت کریں۔ ورد بنائیں۔', color: '#46AF7D', shareEmoji: '🌱' },
+    { id: 3, category: 'dhalim', categoryName: 'ظالم لنفسہ', categoryArabic: 'ظالم لنفسه', categoryMeaning: 'اپنے آپ پر ظلم کرنے والے', name: 'غوغا', arabic: 'الغوغاء', description: 'بے فائدہ چیزوں میں وقت ضائع — لیکن گناہ نہیں', keyPrinciple: 'ان پر حسبہ نہیں — انہیں چھوڑ دو', example: 'ٹی وی دیکھنا لیکن نماز کے لیے رکنا۔ گیمز کھیلنا لیکن نماز پڑھنا۔', inspiration: 'قبول اسلام سے پہلے عمر رضی اللہ عنہ — بعد میں فاروق بنے', taraqqi: 'وقت کا جائزہ: ایک ہفتہ ہر گھنٹے کا حساب رکھیں۔ 30% ضائع وقت کو فائدہ مند میں بدلیں۔', color: '#8B4513', shareEmoji: '🌾' },
+    { id: 2, category: 'dhalim', categoryName: 'ظالم لنفسہ', categoryArabic: 'ظالم لنفسه', categoryMeaning: 'اپنے آپ پر ظلم کرنے والے', name: 'ملے جلے اعمال', arabic: 'خلطوا عملاً صالحاً وآخر سيئاً', description: 'نیک اور برے اعمال ملانا — گناہ کا اعتراف', keyPrinciple: 'شاید اللہ ان پر توبہ کرے', example: 'گناہ کرنا لیکن اعتراف کرنا، کچھ نیکی بھی ساتھ', inspiration: 'عمرو بن العاص رضی اللہ عنہ — ساتھیوں سے قبر پر رہنے کی درخواست', taraqqi: 'بنیادیں مضبوط کریں۔ سب سے زیادہ 3 بار بار گناہ پہچانیں۔ ایک ایک کر کے ختم کریں۔', color: '#A0522D', shareEmoji: '🌻' },
+    { id: 1, category: 'dhalim', categoryName: 'ظالم لنفسہ', categoryArabic: 'ظالم لنفسه', categoryMeaning: 'اپنے آپ پر ظلم کرنے والے', name: 'مکمل ضیاع', arabic: 'التفريط التام', description: 'فرائض بھی ادا نہیں — لیکن پھر بھی مسلمان', keyPrinciple: '"اللہ کی رحمت سے مایوس نہ ہو"', example: 'نماز نہیں، روزہ چھوٹا، زکوٰۃ نہیں — لیکن کہتا ہے "میں مسلمان ہوں"', inspiration: 'فضیل بن عیاض — ڈاکو جس نے قرآن سنا اور بدل گیا', taraqqi: 'ایک نماز سے شروع کریں۔ 40 دن کا چیلنج۔ مایوس نہ ہوں — ہر لمحہ نیا موقع ہے۔', color: '#B87333', shareEmoji: '🌅' }
+  ]
+};
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+const calculateStation = (answers, sections) => {
+  const totalScore = Object.values(answers).reduce((sum, val) => sum + val, 0);
+  const prayerScore = answers.prayer || 0;
+  const sinsScore = answers.sins || 0;
+  
+  let stationId;
+  
+  if (prayerScore <= 1) {
+    stationId = 1;
+  } else if (sinsScore <= 1 && prayerScore <= 2) {
+    stationId = 2;
+  } else if (totalScore <= 20) {
+    stationId = 1;
+  } else if (totalScore <= 35) {
+    stationId = 2;
+  } else if (totalScore <= 45) {
+    stationId = 3;
+  } else if (totalScore <= 55) {
+    stationId = 4;
+  } else if (totalScore <= 65) {
+    stationId = 5;
+  } else if (totalScore <= 75) {
+    stationId = 6;
+  } else if (totalScore <= 85) {
+    stationId = 7;
+  } else if (totalScore <= 95) {
+    stationId = 8;
+  } else {
+    stationId = 9;
   }
+  
+  return { station: stationId, score: totalScore };
 };
 
-const calculateStation = (answers) => {
-  let totalScore = 0;
-  let sectionScores = {};
-  sections.forEach(section => {
-    let sectionScore = 0;
-    section.questions.forEach(q => {
-      if (answers[q.id] !== undefined) {
-        sectionScore += answers[q.id];
-        totalScore += answers[q.id];
-      }
-    });
-    sectionScores[section.id] = sectionScore;
-  });
-  const prayerScore = answers['A1'] || 0;
-  const majorSinsScore = answers['A4'] || 0;
-  const acknowledgmentScore = answers['A5'] || 0;
-  const sectionAScore = sectionScores['A'] || 0;
-  if (prayerScore <= 1) return { station: 1, totalScore, sectionScores };
-  if (majorSinsScore <= 1 && acknowledgmentScore >= 2) return { station: 2, totalScore, sectionScores };
-  if (sectionAScore < 10) return { station: 1, totalScore, sectionScores };
-  if (sectionAScore <= 15) return { station: 2, totalScore, sectionScores };
-  if (totalScore <= 20) return { station: 1, totalScore, sectionScores };
-  if (totalScore <= 35) return { station: 2, totalScore, sectionScores };
-  if (totalScore <= 45) return { station: 3, totalScore, sectionScores };
-  if (totalScore <= 55) return { station: 4, totalScore, sectionScores };
-  if (totalScore <= 65) return { station: 5, totalScore, sectionScores };
-  if (totalScore <= 75) return { station: 6, totalScore, sectionScores };
-  if (totalScore <= 85) return { station: 7, totalScore, sectionScores };
-  if (totalScore <= 95) return { station: 8, totalScore, sectionScores };
-  return { station: 9, totalScore, sectionScores };
-};
+// ============================================
+// SHARE MODAL COMPONENT
+// ============================================
 
-// Share Modal Component
-function ShareModal({ station, onClose }) {
+function ShareModal({ station, onClose, lang, t }) {
   const [copied, setCopied] = useState(false);
   const siteUrl = window.location.origin;
   
-  const shareText = `${station.shareEmoji} I took the Nine Maqāmāt Self-Assessment and discovered my spiritual station!\n\nStation ${station.id}: ${station.arabic} (${station.name})\n\n"${station.keyPrinciple}"\n\nDiscover your station:`;
-  const shareTextTwitter = `${station.shareEmoji} I discovered my spiritual station!\n\nStation ${station.id}: ${station.name}\n\n"${station.keyPrinciple}"\n\nTake the Nine Maqāmāt Assessment:`;
+  const shareText = `${station.shareEmoji} ${lang === 'ur' ? 'میں نے نو مقامات کا جائزہ لیا!' : 'I took the Nine Maqāmāt Self-Assessment!'}\n\n${lang === 'ur' ? 'مقام' : 'Station'} ${station.id}: ${station.arabic} (${station.name})\n\n"${station.keyPrinciple}"`;
   
   const shareLinks = {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(shareText + '\n' + siteUrl)}`,
-    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTextTwitter)}&url=${encodeURIComponent(siteUrl)}`,
+    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(siteUrl)}`,
     telegram: `https://t.me/share/url?url=${encodeURIComponent(siteUrl)}&text=${encodeURIComponent(shareText)}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(siteUrl)}&quote=${encodeURIComponent(shareText)}`,
   };
 
   const copyLink = async () => {
@@ -544,7 +779,6 @@ function ShareModal({ station, onClose }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      // Fallback for older browsers
       const textarea = document.createElement('textarea');
       textarea.value = `${shareText}\n${siteUrl}`;
       document.body.appendChild(textarea);
@@ -556,47 +790,23 @@ function ShareModal({ station, onClose }) {
     }
   };
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Nine Maqāmāt Self-Assessment',
-          text: shareText,
-          url: siteUrl,
-        });
-      } catch (err) {
-        console.log('Share cancelled');
-      }
-    }
-  };
-
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div 
-        className="bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-white/10"
+        className={`bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-white/10 ${lang === 'ur' ? 'font-urdu' : ''}`}
+        dir={lang === 'ur' ? 'rtl' : 'ltr'}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h3 className="text-xl font-semibold text-white mb-1">Share Your Result</h3>
-            <p className="text-slate-400 text-sm">Invite others to discover their station</p>
+            <h3 className="text-xl font-semibold text-white mb-1">{lang === 'ur' ? 'نتیجہ شیئر کریں' : 'Share Your Result'}</h3>
           </div>
-          <button 
-            onClick={onClose}
-            className="text-slate-400 hover:text-white text-2xl leading-none"
-          >
-            ×
-          </button>
+          <button onClick={onClose} className="text-slate-400 hover:text-white text-2xl leading-none">×</button>
         </div>
 
-        {/* Preview Card */}
         <div className="bg-slate-900 rounded-xl p-4 mb-6 border border-white/5">
           <div className="flex items-center gap-3 mb-3">
-            <div 
-              className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold"
-              style={{ background: station.color, color: '#0a1628' }}
-            >
+            <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold" style={{ background: station.color, color: '#0a1628' }}>
               {station.id}
             </div>
             <div>
@@ -607,288 +817,198 @@ function ShareModal({ station, onClose }) {
           <p className="text-slate-400 text-sm italic">"{station.keyPrinciple}"</p>
         </div>
 
-        {/* Share Buttons */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <a
-            href={shareLinks.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white py-3 px-4 rounded-xl transition-all font-medium"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white py-3 px-4 rounded-xl transition-all font-medium">
             WhatsApp
           </a>
-          
-          <a
-            href={shareLinks.twitter}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-xl transition-all font-medium"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-            X (Twitter)
+          <a href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-xl transition-all font-medium">
+            X
           </a>
-          
-          <a
-            href={shareLinks.telegram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white py-3 px-4 rounded-xl transition-all font-medium"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-            </svg>
+          <a href={shareLinks.telegram} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white py-3 px-4 rounded-xl transition-all font-medium">
             Telegram
-          </a>
-          
-          <a
-            href={shareLinks.facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white py-3 px-4 rounded-xl transition-all font-medium"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-            Facebook
           </a>
         </div>
 
-        {/* Copy Link Button */}
         <button
           onClick={copyLink}
-          className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all font-medium border ${
-            copied 
-              ? 'bg-emerald-600 border-emerald-500 text-white' 
-              : 'bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600'
-          }`}
+          className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all font-medium border ${copied ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600'}`}
         >
-          {copied ? (
-            <>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Copied!
-            </>
-          ) : (
-            <>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-              </svg>
-              Copy Link & Message
-            </>
-          )}
+          {copied ? '✓ Copied!' : '📋 Copy Link'}
         </button>
-
-        {/* Native Share (Mobile) */}
-        {navigator.share && (
-          <button
-            onClick={handleNativeShare}
-            className="w-full mt-3 flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 px-4 rounded-xl transition-all font-medium"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-            </svg>
-            More Options...
-          </button>
-        )}
       </div>
     </div>
   );
 }
 
-// Maqamat Dashboard Component
-function MaqamatDashboard({ onBack, userStation }) {
-  const [selectedMaqam, setSelectedMaqam] = useState(null);
-  
-  const maqamatArray = Object.entries(stations).map(([id, data]) => ({
-    id: parseInt(id),
-    ...data
-  })).sort((a, b) => b.id - a.id);
+// ============================================
+// DOWNLOAD RESULT CARD COMPONENT
+// ============================================
+
+function ResultCard({ station, score, lang, t }) {
+  return (
+    <div 
+      id="result-card-download"
+      className="w-[600px] h-[800px] bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 p-8 flex flex-col"
+      style={{ fontFamily: lang === 'ur' ? "'Noto Nastaliq Urdu', serif" : "'Cormorant Garamond', Georgia, serif" }}
+      dir={lang === 'ur' ? 'rtl' : 'ltr'}
+    >
+      {/* Header */}
+      <div className="text-center mb-6">
+        <div className="text-3xl text-amber-400 mb-2">المقامات التسعة</div>
+        <div className="text-xl text-white/80">{lang === 'ur' ? 'نو مقامات کا جائزہ' : 'Nine Maqāmāt Assessment'}</div>
+      </div>
+
+      {/* Station Circle */}
+      <div className="flex justify-center mb-6">
+        <div 
+          className="w-32 h-32 rounded-full flex items-center justify-center text-5xl font-bold shadow-2xl"
+          style={{ background: `linear-gradient(135deg, ${station.color} 0%, ${station.color}99 100%)`, color: '#0a1628' }}
+        >
+          {station.id}
+        </div>
+      </div>
+
+      {/* Station Info */}
+      <div className="text-center mb-6">
+        <div className="text-4xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>
+          {station.arabic}
+        </div>
+        <div className="text-2xl text-white mb-2">{station.name}</div>
+        <div className="text-lg text-slate-400">{station.categoryMeaning}</div>
+      </div>
+
+      {/* Score */}
+      <div className="bg-white/5 rounded-xl p-4 mb-6 text-center">
+        <div className="text-slate-400 text-sm mb-1">{t.results.score}</div>
+        <div className="text-3xl font-bold text-amber-400">{score} <span className="text-lg text-slate-500">{t.results.outOf}</span></div>
+      </div>
+
+      {/* Key Principle */}
+      <div className="bg-amber-400/10 border border-amber-400/30 rounded-xl p-5 mb-6 flex-grow">
+        <div className="text-amber-400 text-sm mb-2">{t.results.keyPrinciple}</div>
+        <p className="text-white/90 text-lg italic leading-relaxed">"{station.keyPrinciple}"</p>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center text-slate-500 text-sm">
+        <div className="mb-1">كلهم من أهل الجنة</div>
+        <div>{lang === 'ur' ? 'امام الموّاق کی سنن المہتدین کی بنیاد پر' : 'Based on Sunan al-Muhtadīn by Imam al-Mawwāq'}</div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// MAQAMAT DASHBOARD COMPONENT
+// ============================================
+
+function MaqamatDashboard({ onBack, userStation, stations, lang, t }) {
+  const [viewMode, setViewMode] = useState('ladder');
+
+  const categoryInfo = {
+    sabiq: { name: lang === 'ur' ? 'سابق بالخیرات' : 'Sābiq bil-Khayrāt', color: '#D4AF37', meaning: lang === 'ur' ? 'نیکیوں میں آگے بڑھنے والے' : 'Those Who Race to Good' },
+    muqtasid: { name: lang === 'ur' ? 'مقتصد' : 'Muqtaṣid', color: '#2E8B57', meaning: lang === 'ur' ? 'میانہ رو' : 'Those Who Are Moderate' },
+    dhalim: { name: lang === 'ur' ? 'ظالم لنفسہ' : 'Ẓālim li-Nafsihi', color: '#8B4513', meaning: lang === 'ur' ? 'اپنے آپ پر ظلم کرنے والے' : 'Those Who Wrong Themselves' }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-8">
+    <div className={`min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-6 ${lang === 'ur' ? 'font-urdu' : ''}`} dir={t.dir}>
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <button
-            onClick={onBack}
-            className="mb-6 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-slate-400 hover:bg-white/10 transition-all text-sm"
-          >
-            ← Back to Results
-          </button>
-          <div className="text-4xl text-amber-400 mb-3 font-arabic">المقامات التسعة</div>
-          <h1 className="text-2xl font-light mb-2 tracking-wide">The Nine Maqāmāt</h1>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto">
-            The descending ladder of spiritual stations from al-Mawwāq's Sunan al-Muhtadīn
-          </p>
+        <button onClick={onBack} className="flex items-center gap-2 text-slate-400 hover:text-amber-400 mb-6 transition-colors">
+          {lang === 'ur' ? '→' : '←'} {t.buttons.back}
+        </button>
+
+        <header className="text-center mb-8">
+          <div className="text-3xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>المقامات التسعة</div>
+          <h1 className="text-2xl font-light text-white">{lang === 'ur' ? 'نو مقامات کی وضاحت' : 'The Nine Maqāmāt Explained'}</h1>
+        </header>
+
+        {/* View Toggle */}
+        <div className="flex justify-center gap-2 mb-8">
+          {['ladder', 'grid'].map(mode => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              className={`px-4 py-2 rounded-lg transition-all ${viewMode === mode ? 'bg-amber-400/20 text-amber-400 border border-amber-400/50' : 'bg-white/5 text-slate-400 border border-transparent'}`}
+            >
+              {mode === 'ladder' ? (lang === 'ur' ? '↕ سیڑھی' : '↕ Ladder') : (lang === 'ur' ? '⊞ گرڈ' : '⊞ Grid')}
+            </button>
+          ))}
         </div>
 
-        {/* Quranic Verse */}
-        <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-5 mb-8 text-center">
-          <p className="text-lg text-amber-400 mb-2 font-arabic">
-            ثُمَّ أَوْرَثْنَا الْكِتَابَ الَّذِينَ اصْطَفَيْنَا مِنْ عِبَادِنَا
-          </p>
-          <p className="text-sm text-slate-400 italic">
-            "Then We caused to inherit the Book those We have chosen of Our servants" — Fāṭir 35:32
-          </p>
-        </div>
-
-        {/* Category Legend */}
+        {/* Legend */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           {Object.entries(categoryInfo).map(([key, cat]) => (
             <div key={key} className="flex items-center gap-2">
-              <div 
-                className="w-3 h-3 rounded-full"
-                style={{ background: cat.color, boxShadow: `0 0 8px ${cat.color}60` }}
-              />
-              <span className="text-sm">
-                <span style={{ color: cat.color }}>{cat.arabic}</span>
-                <span className="text-slate-500 ml-2">{cat.meaning}</span>
-              </span>
+              <div className="w-3 h-3 rounded-full" style={{ background: cat.color }} />
+              <span className="text-slate-400 text-sm">{cat.meaning}</span>
             </div>
           ))}
         </div>
 
-        {/* Maqamat List */}
+        {/* Stations */}
         <div className="space-y-4">
-          {maqamatArray.map((maqam) => {
-            const isUserStation = userStation === maqam.id;
-            const isExpanded = selectedMaqam === maqam.id;
-            
-            return (
-              <div
-                key={maqam.id}
-                onClick={() => setSelectedMaqam(isExpanded ? null : maqam.id)}
-                className={`
-                  rounded-xl p-5 cursor-pointer transition-all border
-                  ${isUserStation ? 'ring-2 ring-amber-400/50' : ''}
-                  ${isExpanded 
-                    ? 'bg-white/10 border-white/20' 
-                    : 'bg-white/5 border-transparent hover:bg-white/8'
-                  }
-                `}
-              >
-                <div className="flex items-start gap-4">
-                  {/* Station Number */}
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${maqam.color}, ${maqam.color}aa)`,
-                      color: '#0a1628',
-                      boxShadow: isUserStation ? `0 0 20px ${maqam.color}60` : 'none'
-                    }}
-                  >
-                    {maqam.id}
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className="text-xl font-arabic" style={{ color: maqam.color }}>
-                        {maqam.arabic}
+          {stations.map((station) => (
+            <div
+              key={station.id}
+              className={`bg-white/5 rounded-xl p-5 border transition-all ${userStation === station.id ? 'border-amber-400 ring-2 ring-amber-400/30' : 'border-transparent hover:border-white/10'}`}
+              style={{ borderLeftWidth: '4px', borderLeftColor: station.color }}
+            >
+              <div className="flex items-start gap-4">
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0"
+                  style={{ background: station.color, color: '#0a1628' }}
+                >
+                  {station.id}
+                </div>
+                <div className="flex-grow">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl text-amber-400" style={{ fontFamily: "'Amiri', serif" }}>{station.arabic}</span>
+                    {userStation === station.id && (
+                      <span className="bg-amber-400 text-slate-900 text-xs px-2 py-0.5 rounded-full font-medium">
+                        {lang === 'ur' ? 'آپ کا مقام' : 'Your Station'}
                       </span>
-                      {isUserStation && (
-                        <span className="px-2 py-0.5 bg-amber-400/20 text-amber-400 text-xs rounded-full">
-                          Your Station
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-lg font-medium mb-1">{maqam.name}</h3>
-                    <p className="text-sm text-slate-400">{maqam.description}</p>
-                    
-                    {/* Category Badge */}
-                    <div className="mt-2">
-                      <span 
-                        className="text-xs px-2 py-1 rounded-full"
-                        style={{ 
-                          background: `${categoryInfo[maqam.category].color}20`,
-                          color: categoryInfo[maqam.category].color
-                        }}
-                      >
-                        {maqam.categoryArabic} • {maqam.categoryName}
-                      </span>
-                    </div>
-
-                    {/* Expanded Content */}
-                    {isExpanded && (
-                      <div className="mt-4 pt-4 border-t border-white/10 space-y-4">
-                        {/* Key Principle */}
-                        <div className="bg-black/20 rounded-lg p-4">
-                          <div className="text-xs uppercase tracking-wider text-slate-500 mb-1">Key Principle</div>
-                          <p className="text-sm text-slate-300 italic">"{maqam.keyPrinciple}"</p>
-                        </div>
-
-                        {/* Historical Figure */}
-                        <div className="bg-amber-400/5 rounded-lg p-4">
-                          <div className="text-xs uppercase tracking-wider text-amber-400/70 mb-1">Historical Example</div>
-                          <div className="text-amber-400 font-medium mb-1">{maqam.figure}</div>
-                          <p className="text-sm text-slate-400">{maqam.figureStory}</p>
-                        </div>
-
-                        {/* Path Forward */}
-                        <div>
-                          <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Path Forward</div>
-                          <div className="grid gap-2">
-                            {maqam.steps.map((step, i) => (
-                              <div key={i} className="flex items-start gap-2 text-sm">
-                                <span 
-                                  className="w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0"
-                                  style={{ background: `${maqam.color}30`, color: maqam.color }}
-                                >
-                                  {i + 1}
-                                </span>
-                                <span className="text-slate-300">{step}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
                     )}
                   </div>
-
-                  {/* Expand Icon */}
-                  <div className="text-slate-500 text-xl">
-                    {isExpanded ? '−' : '+'}
-                  </div>
+                  <h3 className="text-lg text-white mb-1">{station.name}</h3>
+                  <p className="text-slate-400 text-sm mb-2">{station.description}</p>
+                  <p className="text-slate-500 text-xs italic">"{station.keyPrinciple}"</p>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
-        {/* Key Insight */}
-        <div className="mt-8 text-center bg-gradient-to-r from-amber-400/10 via-emerald-400/10 to-orange-400/10 rounded-xl p-6 border border-white/10">
-          <p className="text-2xl text-amber-400 font-arabic mb-2">كلهم من أهل الجنة</p>
-          <p className="text-lg text-slate-300 mb-2">All Nine Categories Are People of Paradise</p>
-          <p className="text-sm text-slate-500 max-w-lg mx-auto">
-            "Our outstripper is a true outstripper, our moderate one has salvation, 
-            and the one who oppressed himself will be forgiven." — Prophet ﷺ
-          </p>
+        {/* Key Message */}
+        <div className="mt-8 bg-gradient-to-r from-amber-400/10 via-emerald-400/10 to-amber-400/10 rounded-xl p-6 text-center border border-amber-400/20">
+          <div className="text-2xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>كلهم من أهل الجنة</div>
+          <h3 className="text-lg text-white mb-2">{t.results.allParadise}</h3>
+          <p className="text-slate-400 text-sm">{t.results.faqih}</p>
         </div>
-
-        {/* Footer */}
-        <footer className="text-center mt-10 pt-6 border-t border-white/10 text-slate-600 text-xs">
-          Based on <em>Sunan al-Muhtadīn</em> by Imam al-Mawwāq (d. 897 AH)
-          <br />As taught by Sheikh Hamza Yusuf • DEENSTREAM Turkey 2015
-        </footer>
       </div>
     </div>
   );
 }
 
-function App() {
+// ============================================
+// MAIN APP COMPONENT
+// ============================================
+
+export default function MaqamatAssessment() {
+  const [lang, setLang] = useState('en');
+  const [started, setStarted] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [result, setResult] = useState(null);
-  const [started, setStarted] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const resultCardRef = useRef(null);
+
+  const t = content[lang];
+  const sections = sectionsData[lang];
+  const stations = stationsData[lang];
 
   const handleAnswer = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -896,7 +1016,8 @@ function App() {
 
   const getCurrentProgress = () => {
     const totalQuestions = sections.reduce((acc, s) => acc + s.questions.length, 0);
-    return Math.round((Object.keys(answers).length / totalQuestions) * 100);
+    const answeredQuestions = Object.keys(answers).length;
+    return Math.round((answeredQuestions / totalQuestions) * 100);
   };
 
   const canProceed = () => sections[currentSection].questions.every(q => answers[q.id] !== undefined);
@@ -906,7 +1027,7 @@ function App() {
       setCurrentSection(prev => prev + 1);
       window.scrollTo(0, 0);
     } else {
-      const calculatedResult = calculateStation(answers);
+      const calculatedResult = calculateStation(answers, sections);
       setResult(calculatedResult);
       setShowResults(true);
       window.scrollTo(0, 0);
@@ -923,171 +1044,268 @@ function App() {
     setStarted(false);
   };
 
+  const toggleLanguage = () => {
+    const newLang = lang === 'en' ? 'ur' : 'en';
+    setLang(newLang);
+  };
+
+  // Download as PNG
+  const downloadResultAsPNG = async () => {
+    setDownloading(true);
+    
+    try {
+      // Dynamically import html2canvas
+      const html2canvas = (await import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.esm.min.js')).default;
+      
+      // Create a temporary container
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      document.body.appendChild(container);
+      
+      // Render the result card
+      const station = stations.find(s => s.id === result.station);
+      const cardHTML = `
+        <div id="download-card" style="width: 600px; height: 800px; background: linear-gradient(to bottom, #0f172a, #1e293b, #0f172a); padding: 32px; font-family: Georgia, serif; color: white; display: flex; flex-direction: column;">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 28px; color: #fbbf24; margin-bottom: 8px; font-family: 'Times New Roman', serif;">المقامات التسعة</div>
+            <div style="font-size: 20px; color: rgba(255,255,255,0.8);">${lang === 'ur' ? 'نو مقامات کا جائزہ' : 'Nine Maqāmāt Assessment'}</div>
+          </div>
+          <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: ${station.color}; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: #0f172a;">
+              ${station.id}
+            </div>
+          </div>
+          <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 32px; color: #fbbf24; margin-bottom: 8px;">${station.arabic}</div>
+            <div style="font-size: 24px; color: white; margin-bottom: 8px;">${station.name}</div>
+            <div style="font-size: 16px; color: #94a3b8;">${station.categoryMeaning}</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;">
+            <div style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">${t.results.score}</div>
+            <div style="font-size: 28px; font-weight: bold; color: #fbbf24;">${result.score} <span style="font-size: 16px; color: #64748b;">${t.results.outOf}</span></div>
+          </div>
+          <div style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 20px; flex-grow: 1;">
+            <div style="color: #fbbf24; font-size: 14px; margin-bottom: 8px;">${t.results.keyPrinciple}</div>
+            <p style="color: rgba(255,255,255,0.9); font-size: 18px; font-style: italic; line-height: 1.6;">"${station.keyPrinciple}"</p>
+          </div>
+          <div style="text-align: center; color: #64748b; font-size: 12px; margin-top: 24px;">
+            <div style="margin-bottom: 4px;">كلهم من أهل الجنة</div>
+            <div>${lang === 'ur' ? 'امام الموّاق کی سنن المہتدین کی بنیاد پر' : 'Based on Sunan al-Muhtadīn by Imam al-Mawwāq'}</div>
+          </div>
+        </div>
+      `;
+      
+      container.innerHTML = cardHTML;
+      const cardElement = container.querySelector('#download-card');
+      
+      const canvas = await html2canvas(cardElement, {
+        backgroundColor: '#0f172a',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+      
+      // Download
+      const link = document.createElement('a');
+      link.download = `maqamat-station-${result.station}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(container);
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Fallback: show alert
+      alert(lang === 'ur' ? 'ڈاؤن لوڈ میں مسئلہ ہوا۔ براہ کرم اسکرین شاٹ لیں۔' : 'Download failed. Please take a screenshot instead.');
+    }
+    
+    setDownloading(false);
+  };
+
   // Show Dashboard
   if (showDashboard && result) {
+    const station = stations.find(s => s.id === result.station);
     return (
       <MaqamatDashboard 
         onBack={() => { setShowDashboard(false); window.scrollTo(0, 0); }}
         userStation={result.station}
+        stations={stations}
+        lang={lang}
+        t={t}
       />
     );
   }
 
-  // Landing Page
+  // Welcome Screen
   if (!started) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-6 flex items-center justify-center">
-        <div className="max-w-xl text-center">
-          <div className="text-5xl text-amber-400 mb-4 font-arabic">المقامات التسعة</div>
-          <h1 className="text-3xl font-light mb-2 tracking-wide">The Nine Maqāmāt</h1>
-          <h2 className="text-lg text-slate-400 mb-8">Self-Assessment Tool</h2>
-          <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-6 mb-8 text-left">
-            <p className="text-xl text-amber-400 text-center mb-3 font-arabic">
-              فَمِنْهُمْ ظَالِمٌ لِّنَفْسِهِ وَمِنْهُم مُّقْتَصِدٌ وَمِنْهُمْ سَابِقٌ بِالْخَيْرَاتِ
-            </p>
-            <p className="text-sm text-slate-400 text-center italic">
-              "Among them is he who wrongs himself, he who is moderate, and he who outstrips in good" — Fāṭir 35:32
-            </p>
+      <div className={`min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-6 ${lang === 'ur' ? 'font-urdu' : ''}`} dir={t.dir}>
+        {/* Language Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={toggleLanguage}
+            className="px-4 py-2 bg-amber-400/20 border border-amber-400/50 text-amber-400 rounded-lg hover:bg-amber-400/30 transition-all font-medium"
+          >
+            {t.langSwitch}
+          </button>
+        </div>
+
+        <div className="max-w-2xl mx-auto pt-12">
+          <header className="text-center mb-10">
+            <div className="text-4xl md:text-5xl text-amber-400 mb-3" style={{ fontFamily: "'Amiri', serif" }}>المقامات التسعة</div>
+            <h1 className="text-2xl md:text-3xl font-light mb-2">{t.title}</h1>
+            <h2 className="text-lg text-slate-400">{t.subtitle}</h2>
+          </header>
+
+          <div className="bg-white/5 rounded-2xl p-6 mb-8 border border-white/10">
+            <blockquote className="text-center text-lg italic text-amber-200/80 mb-4">
+              {t.preface}
+            </blockquote>
+            <p className="text-center text-slate-400 text-sm">{t.prefaceNote}</p>
           </div>
-          <div className="bg-white/5 rounded-xl p-5 mb-6 text-left text-sm">
-            <h3 className="text-amber-400 mb-3 font-semibold">Before You Begin:</h3>
-            <ul className="text-slate-300 space-y-2 list-disc pl-5">
-              <li>This is for <strong className="text-white">personal reflection only</strong></li>
-              <li>All nine stations are within Islam and Paradise</li>
-              <li>Be honest — this works only with sincerity</li>
+
+          <div className="bg-white/5 rounded-2xl p-6 mb-8">
+            <ul className="space-y-3">
+              {t.remember.map((item, i) => (
+                <li key={i} className="flex items-start gap-3 text-slate-300">
+                  <span className="text-amber-400 mt-1">✦</span>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </div>
-          <p className="text-slate-500 mb-6 text-sm">22 questions • ~10 minutes • Based on al-Mawwāq's Sunan al-Muhtadīn</p>
+
+          <p className="text-center text-amber-200/60 italic mb-8">{t.honesty}</p>
+
           <button
             onClick={() => setStarted(true)}
-            className="px-10 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-lg font-semibold text-lg hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg hover:shadow-amber-500/25"
+            className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl text-lg font-semibold hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/25"
           >
-            Begin Assessment
+            {t.startBtn}
           </button>
+
+          <footer className="text-center mt-10 text-slate-600 text-sm">
+            {t.footer}
+          </footer>
         </div>
       </div>
     );
   }
 
-  // Results Page
+  // Results Screen
   if (showResults && result) {
-    const station = stations[result.station];
-    const categoryColors = {
-      dhalim: { bg: 'bg-orange-900/20', border: 'border-orange-700/50', text: 'text-orange-400' },
-      muqtasid: { bg: 'bg-emerald-900/20', border: 'border-emerald-700/50', text: 'text-emerald-400' },
-      sabiq: { bg: 'bg-amber-900/20', border: 'border-amber-600/50', text: 'text-amber-400' }
-    };
-    const colors = categoryColors[station.category];
+    const station = stations.find(s => s.id === result.station);
     
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="text-xs text-slate-500 uppercase tracking-widest mb-3">Your Station</div>
+      <div className={`min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-6 ${lang === 'ur' ? 'font-urdu' : ''}`} dir={t.dir}>
+        {/* Language Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={toggleLanguage}
+            className="px-4 py-2 bg-amber-400/20 border border-amber-400/50 text-amber-400 rounded-lg hover:bg-amber-400/30 transition-all font-medium"
+          >
+            {t.langSwitch}
+          </button>
+        </div>
+
+        <div className="max-w-2xl mx-auto pt-8">
+          <header className="text-center mb-8">
+            <div className="text-2xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>المقامات التسعة</div>
+            <h1 className="text-xl font-light">{t.results.title}</h1>
+          </header>
+
+          {/* Station Badge */}
+          <div className="flex justify-center mb-6">
             <div 
-              className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl font-bold text-slate-900 shadow-2xl"
-              style={{ background: `linear-gradient(135deg, ${station.color}, ${station.color}aa)`, boxShadow: `0 0 40px ${station.color}40` }}
+              className="w-28 h-28 rounded-full flex items-center justify-center text-4xl font-bold shadow-2xl"
+              style={{ background: `linear-gradient(135deg, ${station.color} 0%, ${station.color}99 100%)`, color: '#0a1628' }}
             >
-              {result.station}
+              {station.id}
             </div>
-            <div className="text-3xl text-amber-400 mb-2 font-arabic">{station.arabic}</div>
-            <h1 className="text-2xl font-light mb-3">{station.name}</h1>
-            <span className={`inline-block px-4 py-1.5 rounded-full text-sm ${colors.bg} ${colors.border} ${colors.text} border`}>
-              {station.categoryArabic} • {station.categoryName}
-            </span>
           </div>
 
+          {/* Station Info */}
+          <div className="text-center mb-6">
+            <div className="text-3xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>{station.arabic}</div>
+            <h2 className="text-xl text-white mb-1">{station.name}</h2>
+            <p className="text-slate-400">{station.categoryMeaning}</p>
+          </div>
+
+          {/* Score */}
+          <div className="bg-white/5 rounded-xl p-4 mb-6 text-center">
+            <span className="text-slate-400">{t.results.score}: </span>
+            <span className="text-2xl font-bold text-amber-400">{result.score}</span>
+            <span className="text-slate-500 ml-2">{t.results.outOf}</span>
+          </div>
+
+          {/* Key Principle */}
+          <div className="bg-amber-400/10 border border-amber-400/30 rounded-xl p-5 mb-6">
+            <h3 className="text-amber-400 text-sm mb-2">{t.results.keyPrinciple}</h3>
+            <p className="text-white/90 italic">"{station.keyPrinciple}"</p>
+          </div>
+
+          {/* Example */}
           <div className="bg-white/5 rounded-xl p-5 mb-6">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-amber-400 font-semibold">Your Score</span>
-              <span className="text-xl">{result.totalScore}/110</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              {sections.map(s => (
-                <div key={s.id} className="bg-black/20 rounded-lg p-2">
-                  <div className="text-slate-500">{s.id}</div>
-                  <div className="text-white">{result.sectionScores[s.id]}/{s.questions.length * 5}</div>
-                </div>
-              ))}
-            </div>
+            <h3 className="text-emerald-400 text-sm mb-2">{t.results.example}</h3>
+            <p className="text-slate-300">{station.example}</p>
           </div>
 
-          <div className={`${colors.bg} border-l-4 rounded-r-lg p-5 mb-6`} style={{ borderColor: station.color }}>
-            <h3 className={`${colors.text} font-semibold mb-2`}>Your Current State</h3>
-            <p className="text-slate-300 text-sm leading-relaxed">{station.currentState}</p>
-          </div>
-
-          <div className="bg-emerald-900/20 border border-emerald-700/30 rounded-xl p-5 mb-6">
-            <h3 className="text-emerald-400 font-semibold mb-3">✦ The Good News</h3>
-            <ul className="text-slate-300 text-sm space-y-1.5 list-disc pl-5">
-              {station.goodNews.map((n, i) => <li key={i}>{n}</li>)}
-            </ul>
-          </div>
-
-          <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-5 mb-6">
-            <h3 className="text-amber-400 font-semibold mb-1">Historical Inspiration</h3>
-            <h4 className="text-white text-lg mb-2">{station.figure}</h4>
-            <p className="text-slate-400 text-sm italic leading-relaxed">{station.figureStory}</p>
-          </div>
-
+          {/* Inspiration */}
           <div className="bg-white/5 rounded-xl p-5 mb-6">
-            <h3 className="text-amber-400 font-semibold mb-4">Your Path Forward</h3>
-            <div className="space-y-2">
-              {station.steps.map((step, i) => (
-                <div key={i} className="flex items-start gap-3 bg-black/20 rounded-lg p-3">
-                  <div 
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-slate-900 flex-shrink-0"
-                    style={{ background: station.color }}
-                  >{i + 1}</div>
-                  <span className="text-slate-300 text-sm">{step}</span>
-                </div>
-              ))}
-            </div>
+            <h3 className="text-purple-400 text-sm mb-2">{t.results.inspiration}</h3>
+            <p className="text-slate-300">{station.inspiration}</p>
           </div>
 
-          {station.warning && (
-            <div className="bg-orange-900/20 border border-orange-700/30 rounded-lg p-4 mb-6">
-              <p className="text-orange-300 text-sm">⚠️ {station.warning}</p>
-            </div>
-          )}
-
-          <div className="text-center bg-amber-400/5 rounded-xl p-6 mb-6">
-            <p className="text-xl text-amber-400 font-arabic mb-1">كلهم من أهل الجنة</p>
-            <p className="text-slate-400 text-sm">"All nine categories are people of Paradise"</p>
+          {/* Taraqqi */}
+          <div className="bg-gradient-to-r from-emerald-400/10 to-teal-400/10 border border-emerald-400/30 rounded-xl p-5 mb-8">
+            <h3 className="text-emerald-400 text-sm mb-2">{t.results.pathForward}</h3>
+            <p className="text-slate-300">{station.taraqqi}</p>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col gap-3">
-            {/* Share Button - Primary */}
+          <div className="space-y-3 mb-8">
             <button
               onClick={() => setShowShareModal(true)}
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg hover:shadow-emerald-500/25"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-400 hover:to-teal-400 transition-all"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-              Share Your Result
+              {t.buttons.share}
             </button>
 
-            {/* Secondary Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={downloadResultAsPNG}
+              disabled={downloading}
+              className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-400 hover:to-pink-400 transition-all disabled:opacity-50"
+            >
+              {downloading ? t.buttons.downloading : t.buttons.download}
+            </button>
+
+            <div className="flex gap-3">
               <button
                 onClick={() => { setShowDashboard(true); window.scrollTo(0, 0); }}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl font-semibold hover:from-amber-400 hover:to-amber-500 transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl font-semibold hover:from-amber-400 hover:to-amber-500 transition-all"
               >
-                📖 Maqāmāt Explained
+                {t.buttons.explained}
               </button>
               <button
                 onClick={resetAssessment}
-                className="flex-1 px-6 py-3 bg-white/5 border border-white/20 rounded-xl text-slate-300 hover:bg-white/10 transition-all"
+                className="flex-1 py-3 bg-white/5 border border-white/20 rounded-xl text-slate-300 hover:bg-white/10 transition-all"
               >
-                ↺ Retake Assessment
+                {t.buttons.retake}
               </button>
             </div>
           </div>
 
-          <footer className="text-center mt-10 pt-6 border-t border-white/10 text-slate-600 text-xs">
-            Based on <em>Sunan al-Muhtadīn</em> by Imam al-Mawwāq • As taught by Sheikh Hamza Yusuf
+          {/* Paradise Message */}
+          <div className="bg-gradient-to-r from-amber-400/10 via-emerald-400/10 to-amber-400/10 rounded-xl p-6 text-center border border-amber-400/20 mb-8">
+            <div className="text-xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>كلهم من أهل الجنة</div>
+            <h3 className="text-lg text-white mb-2">{t.results.allParadise}</h3>
+            <p className="text-slate-400 text-sm italic">{t.results.faqih}</p>
+          </div>
+
+          <footer className="text-center text-slate-600 text-xs">
+            {t.footer}
           </footer>
         </div>
 
@@ -1096,37 +1314,53 @@ function App() {
           <ShareModal 
             station={{ ...station, id: result.station }}
             onClose={() => setShowShareModal(false)}
+            lang={lang}
+            t={t}
           />
         )}
       </div>
     );
   }
 
-  // Questions Page
+  // Questions Screen
   const section = sections[currentSection];
+  const progress = getCurrentProgress();
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-6">
+    <div className={`min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-6 ${lang === 'ur' ? 'font-urdu' : ''}`} dir={t.dir}>
+      {/* Language Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <button
+          onClick={toggleLanguage}
+          className="px-4 py-2 bg-amber-400/20 border border-amber-400/50 text-amber-400 rounded-lg hover:bg-amber-400/30 transition-all font-medium"
+        >
+          {t.langSwitch}
+        </button>
+      </div>
+
       <div className="max-w-2xl mx-auto">
+        {/* Progress Bar */}
         <div className="mb-6">
           <div className="flex justify-between text-xs text-slate-400 mb-2">
-            <span>Section {currentSection + 1}/{sections.length}</span>
-            <span className="text-amber-400">{getCurrentProgress()}%</span>
+            <span>{t.section} {currentSection + 1}/{sections.length}</span>
+            <span className="text-amber-400">{progress}%</span>
           </div>
           <div className="h-1 bg-white/10 rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-amber-500 to-emerald-500 rounded-full transition-all duration-300"
-              style={{ width: `${getCurrentProgress()}%` }}
+              style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
+        {/* Section Header */}
         <div className="text-center mb-6 pb-4 border-b border-white/10">
-          <div className="text-2xl text-amber-400 font-arabic mb-1">{section.arabic}</div>
+          <div className="text-2xl text-amber-400 mb-1" style={{ fontFamily: "'Amiri', serif" }}>{section.arabic}</div>
           <h2 className="text-xl font-light mb-1">{section.title}</h2>
           <p className="text-slate-400 text-sm">{section.description}</p>
         </div>
 
+        {/* Questions */}
         <div className="space-y-6">
           {section.questions.map((question, qIndex) => (
             <div 
@@ -1142,7 +1376,7 @@ function App() {
                   {question.subtitle && <p className="text-xs text-slate-500 mt-1 italic">{question.subtitle}</p>}
                 </div>
               </div>
-              <div className="space-y-2 ml-10">
+              <div className={`space-y-2 ${lang === 'ur' ? 'mr-10' : 'ml-10'}`}>
                 {question.options.map((option) => (
                   <label
                     key={option.value}
@@ -1174,29 +1408,28 @@ function App() {
           ))}
         </div>
 
+        {/* Navigation */}
         <div className="flex justify-between mt-8 pt-4 border-t border-white/10">
           <button
             onClick={() => { setCurrentSection(prev => prev - 1); window.scrollTo(0, 0); }}
             disabled={currentSection === 0}
-            className={`px-5 py-2.5 rounded-lg text-sm ${currentSection === 0 ? 'bg-white/5 text-slate-600 cursor-not-allowed' : 'bg-white/5 text-slate-300 hover:bg-white/10'}`}
+            className="px-6 py-3 bg-white/5 rounded-xl text-slate-400 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
-            ← Previous
+            {t.previous}
           </button>
           <button
             onClick={handleNext}
             disabled={!canProceed()}
-            className={`px-6 py-2.5 rounded-lg text-sm font-semibold ${
-              canProceed() 
-                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 hover:from-amber-400 hover:to-amber-500' 
-                : 'bg-white/5 text-slate-600 cursor-not-allowed'
-            }`}
+            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl font-semibold hover:from-amber-400 hover:to-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            {currentSection === sections.length - 1 ? 'See Results' : 'Next →'}
+            {currentSection === sections.length - 1 ? t.complete : t.next}
           </button>
         </div>
+
+        {!canProceed() && (
+          <p className="text-center text-amber-400/60 text-sm mt-4">{t.answerAll}</p>
+        )}
       </div>
     </div>
   );
 }
-
-export default App;
