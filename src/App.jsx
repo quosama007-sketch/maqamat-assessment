@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 
 const sections = [
   {
@@ -331,7 +331,10 @@ const stations = {
     figureStory: 'He was a highway robber. One night, climbing a wall to sin, he heard: "Has not the time come for hearts to be humbled?" He said, "Yes, Lord, the time has come." He became one of the greatest saints of Islam.',
     currentState: "You've identified as Muslim but have largely abandoned the practices of Islam.",
     goodNews: ['You are still Muslim — mercy is wide open', 'The Prophet ﷺ said the ẓālim "will be forgiven"', 'Many great Muslims started here'],
-    steps: ['Start with ONE prayer daily', 'Add a second prayer after one week', 'Set ONE prayer alarm', "Make duʿāʾ: 'O Allah, help me pray'"]
+    steps: ['Start with ONE prayer daily', 'Add a second prayer after one week', 'Set ONE prayer alarm', "Make duʿāʾ: 'O Allah, help me pray'"],
+    keyPrinciple: '"Don\'t despair of the mercy of Allah"',
+    description: "Doesn't even do the farāʾiḍ — but still Muslim",
+    shareEmoji: '🌱'
   },
   2: {
     name: 'Mixed Deeds',
@@ -344,7 +347,10 @@ const stations = {
     figureStory: "A late convert who mixed good and bad. On his deathbed, he asked companions to stay by his grave — his humility and awareness of his mixed state is a model.",
     currentState: 'You do good deeds but mix them with sins. Your acknowledgment of sin is itself a mercy.',
     goodNews: ['Allah mentions your category with hope', 'Acknowledgment of sin is a sign of faith', 'The struggle you feel IS the spiritual life'],
-    steps: ['Make five prayers non-negotiable', 'Identify your TOP 3 recurring sins', 'Work on eliminating ONE at a time', 'Find accountability']
+    steps: ['Make five prayers non-negotiable', 'Identify your TOP 3 recurring sins', 'Work on eliminating ONE at a time', 'Find accountability'],
+    keyPrinciple: 'Perhaps Allah will make tawba on them',
+    description: 'Mixing good deeds with bad deeds — admits sins',
+    shareEmoji: '🌿'
   },
   3: {
     name: 'The Riffraff',
@@ -357,7 +363,10 @@ const stations = {
     figureStory: "Before Islam, ʿUmar wasn't the worst — just harsh and tribal, spending time without higher purpose. That same energy became al-Fārūq.",
     currentState: "You maintain farāʾiḍ but much time is wasted in things of no benefit.",
     goodNews: ['Your foundations are solid', "You're better than those who waste time AND sin", 'You just need to redirect existing time'],
-    steps: ['Track every hour for ONE week', "Convert 30% of 'wasted' to 'beneficial'", 'Add 10 min Quran after Fajr', 'Join ONE regular beneficial gathering']
+    steps: ['Track every hour for ONE week', "Convert 30% of 'wasted' to 'beneficial'", 'Add 10 min Quran after Fajr', 'Join ONE regular beneficial gathering'],
+    keyPrinciple: 'Wasting time in things of no harm and no benefit',
+    description: 'Wasting time in things of no benefit — but at least not sinning',
+    shareEmoji: '🌳'
   },
   4: {
     name: 'The Lesser Evil',
@@ -370,7 +379,10 @@ const stations = {
     figureStory: "A powerful minister had his sheikh make him sit on a garbage heap and beg. This 'lower' thing broke his ego — he became one of the great awliyāʾ of Morocco.",
     currentState: "You think strategically — engaging in something lower can prevent something worse.",
     goodNews: ["You've moved beyond mere compliance", "You're actively working on your heart", 'Your spiritual cause-and-effect awareness is awakening'],
-    steps: ['Make intention for EVERYTHING', 'Build a simple wird', 'Track wird consistency 30 days', 'Study purification of the heart']
+    steps: ['Make intention for EVERYTHING', 'Build a simple wird', 'Track wird consistency 30 days', 'Study purification of the heart'],
+    keyPrinciple: 'Doing something normally unacceptable to ward off something worse',
+    description: 'Doing lower things to ward off worse things',
+    shareEmoji: '🌲'
   },
   5: {
     name: 'Ennobled Permissibles',
@@ -383,7 +395,10 @@ const stations = {
     figureStory: "One of the ten promised Paradise, enormously wealthy — but his wealth was worship. He transformed commerce into ʿibādah through intention.",
     currentState: "You transform ordinary activities into worship through intention.",
     goodNews: ["You're living Islam in every moment", 'The mundane has become sacred', 'Your entire life is becoming worship'],
-    steps: ['Add disputed good deeds scholars recommend', 'Engage with ikhtilāf', "Learn your madhab's positions", 'Practice "this is valid, this is also valid"']
+    steps: ['Add disputed good deeds scholars recommend', 'Engage with ikhtilāf', "Learn your madhab's positions", 'Practice "this is valid, this is also valid"'],
+    keyPrinciple: 'No permissible thing except it can become noble through intention',
+    description: 'Permissible things that become noble deeds through intention',
+    shareEmoji: '🌴'
   },
   6: {
     name: 'Disputed Virtues',
@@ -396,7 +411,10 @@ const stations = {
     figureStory: 'The Andalusian scholar faced criticism for disputed positions. He wrote extensively defending legitimate ikhtilāf while respecting those who differed.',
     currentState: "You engage in acts some call recommended, others permissible — following valid opinions without condemning others.",
     goodNews: ["You're never below mubāḥ", 'You embody the tolerance the Prophet ﷺ wanted', 'You understand ikhtilāf is mercy'],
-    steps: ['Ask: "Is this the BEST use of my time?"', 'Learn relative ranks of good deeds', 'Protect your peak spiritual hours', 'Prioritize benefiting others']
+    steps: ['Ask: "Is this the BEST use of my time?"', 'Learn relative ranks of good deeds', 'Protect your peak spiritual hours', 'Prioritize benefiting others'],
+    keyPrinciple: 'Never in anything less than mubāḥ with everybody',
+    description: 'Doing things disputed between being virtuous vs. permissible',
+    shareEmoji: '🌾'
   },
   7: {
     name: 'Important Things',
@@ -409,7 +427,10 @@ const stations = {
     figureStory: "In Mālik's circle, he got up to pray nāfila. Mālik stopped him: 'What you're going to is not more important than what you're in. This IS ʿibādah.'",
     currentState: "You're consistently in something important — your time is purposeful.",
     goodNews: ["You've internalized that learning IS action", 'Your life has purpose and direction', 'You can reach the ʿārifīn through intention'],
-    steps: ['Ask: "Is there something MORE important now?"', 'Learn the fiqh of priorities', "Study Ḥanẓala's hadith", 'Examine what MORE important thing you might be missing']
+    steps: ['Ask: "Is there something MORE important now?"', 'Learn the fiqh of priorities', "Study Ḥanẓala's hadith", 'Examine what MORE important thing you might be missing'],
+    keyPrinciple: 'Being in something important if not in what is more important',
+    description: 'In something important if not the more important',
+    shareEmoji: '⭐'
   },
   8: {
     name: 'Hour by Hour',
@@ -422,7 +443,10 @@ const stations = {
     figureStory: 'He said "Ḥanẓala has become a hypocrite!" — exalted with the Prophet ﷺ, then preoccupied with family. The Prophet ﷺ said: "Sāʿatun wa sāʿatun — a time for this, a time for that."',
     currentState: 'You practice "a time for this, a time for that" — alternating between important and MORE important.',
     goodNews: ['You recognize different spiritual states', 'Like Ḥanẓala, you feel the difference', 'If always exalted, angels would shake your hands'],
-    steps: ['Minimize gap between exalted and ordinary', 'Bring FULL presence to everything', 'Practice continuous dhikr', 'Spend more time with people of Station 9']
+    steps: ['Minimize gap between exalted and ordinary', 'Bring FULL presence to everything', 'Practice continuous dhikr', 'Spend more time with people of Station 9'],
+    keyPrinciple: 'A time for this, a time for that — alternating between states',
+    description: 'Either in something important OR something more important',
+    shareEmoji: '🌟'
   },
   9: {
     name: "Station of the ʿĀrifīn",
@@ -436,7 +460,34 @@ const stations = {
     currentState: 'If death came now, you would not find anything you would want to increase.',
     goodNews: ['This is the station of the knowers of Allah', "Al-Mawwāq: 'not in the capacity of the majority'", 'Even ʿārifūn slip — perfected only in prophets'],
     steps: ["Never assume you've 'arrived'", 'See yourself as the least of Muslims', 'Your role is helping others climb', 'Your presence should elevate others'],
-    warning: "If you scored yourself here, you're probably not in it. The ʿārifūn see themselves as lowest."
+    warning: "If you scored yourself here, you're probably not in it. The ʿārifūn see themselves as lowest.",
+    keyPrinciple: 'If surprised by death, would find nothing to increase',
+    description: 'Always doing the most important thing at every moment',
+    shareEmoji: '✨'
+  }
+};
+
+const categoryInfo = {
+  sabiq: {
+    name: 'Sābiq bil-Khayrāt',
+    arabic: 'سابق بالخيرات',
+    meaning: 'Those Who Race to Good',
+    description: 'The highest three stations',
+    color: '#D4AF37',
+  },
+  muqtasid: {
+    name: 'Muqtaṣid',
+    arabic: 'مقتصد',
+    meaning: 'Those Who Are Moderate',
+    description: 'The middle three stations',
+    color: '#2E8B57',
+  },
+  dhalim: {
+    name: 'Ẓālim li-Nafsihi',
+    arabic: 'ظالم لنفسه',
+    meaning: 'Those Who Wrong Themselves',
+    description: 'The lowest three stations — yet still people of Paradise',
+    color: '#8B4513',
   }
 };
 
@@ -472,323 +523,372 @@ const calculateStation = (answers) => {
   return { station: 9, totalScore, sectionScores };
 };
 
-// Shareable Image Component
-const ShareableResultCard = ({ result, station, onClose }) => {
-  const canvasRef = useRef(null);
-  const [downloading, setDownloading] = useState(false);
+// Share Modal Component
+function ShareModal({ station, onClose }) {
+  const [copied, setCopied] = useState(false);
+  const siteUrl = window.location.origin;
+  
+  const shareText = `${station.shareEmoji} I took the Nine Maqāmāt Self-Assessment and discovered my spiritual station!\n\nStation ${station.id}: ${station.arabic} (${station.name})\n\n"${station.keyPrinciple}"\n\nDiscover your station:`;
+  const shareTextTwitter = `${station.shareEmoji} I discovered my spiritual station!\n\nStation ${station.id}: ${station.name}\n\n"${station.keyPrinciple}"\n\nTake the Nine Maqāmāt Assessment:`;
+  
+  const shareLinks = {
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(shareText + '\n' + siteUrl)}`,
+    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTextTwitter)}&url=${encodeURIComponent(siteUrl)}`,
+    telegram: `https://t.me/share/url?url=${encodeURIComponent(siteUrl)}&text=${encodeURIComponent(shareText)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(siteUrl)}&quote=${encodeURIComponent(shareText)}`,
+  };
 
-  const downloadImage = () => {
-    setDownloading(true);
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const width = 600;
-    const height = 800;
-    canvas.width = width;
-    canvas.height = height;
-
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, '#0a1628');
-    gradient.addColorStop(0.5, '#1a2744');
-    gradient.addColorStop(1, '#0d1a2d');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-
-    // Decorative pattern (geometric)
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.1)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 20; i++) {
-      ctx.beginPath();
-      ctx.arc(width / 2, 200, 50 + i * 15, 0, Math.PI * 2);
-      ctx.stroke();
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(`${shareText}\n${siteUrl}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = `${shareText}\n${siteUrl}`;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
+  };
 
-    // Header
-    ctx.fillStyle = '#D4AF37';
-    ctx.font = '48px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('المقامات التسعة', width / 2, 80);
-
-    ctx.fillStyle = '#888888';
-    ctx.font = '18px sans-serif';
-    ctx.fillText('The Nine Maqāmāt Self-Assessment', width / 2, 110);
-
-    // Station circle
-    const circleGradient = ctx.createRadialGradient(width / 2, 220, 0, width / 2, 220, 60);
-    circleGradient.addColorStop(0, station.color);
-    circleGradient.addColorStop(1, station.color + '99');
-    ctx.fillStyle = circleGradient;
-    ctx.beginPath();
-    ctx.arc(width / 2, 220, 55, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Station number
-    ctx.fillStyle = '#0a1628';
-    ctx.font = 'bold 48px sans-serif';
-    ctx.fillText(result.station.toString(), width / 2, 238);
-
-    // Station Arabic name
-    ctx.fillStyle = station.color;
-    ctx.font = '36px serif';
-    ctx.fillText(station.arabic, width / 2, 320);
-
-    // Station English name
-    ctx.fillStyle = '#e8e4d9';
-    ctx.font = '24px sans-serif';
-    ctx.fillText(station.name, width / 2, 360);
-
-    // Category badge
-    ctx.fillStyle = station.color + '30';
-    const badgeWidth = 280;
-    const badgeHeight = 32;
-    const badgeX = (width - badgeWidth) / 2;
-    const badgeY = 385;
-    ctx.beginPath();
-    ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 16);
-    ctx.fill();
-
-    ctx.fillStyle = station.color;
-    ctx.font = '14px sans-serif';
-    ctx.fillText(`${station.categoryArabic} • ${station.categoryName}`, width / 2, 407);
-
-    // Score
-    ctx.fillStyle = '#e8e4d9';
-    ctx.font = '20px sans-serif';
-    ctx.fillText(`Score: ${result.totalScore}/110`, width / 2, 470);
-
-    // Section scores bar
-    const barStartX = 80;
-    const barWidth = width - 160;
-    const barY = 510;
-    const sectionWidth = barWidth / 6;
-
-    sections.forEach((section, i) => {
-      const score = result.sectionScores[section.id];
-      const maxScore = section.questions.length * 5;
-      const percentage = score / maxScore;
-      
-      // Background bar
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-      ctx.fillRect(barStartX + i * sectionWidth + 5, barY, sectionWidth - 10, 40);
-      
-      // Fill bar
-      ctx.fillStyle = station.color + '80';
-      ctx.fillRect(barStartX + i * sectionWidth + 5, barY + 40 * (1 - percentage), sectionWidth - 10, 40 * percentage);
-      
-      // Label
-      ctx.fillStyle = '#888888';
-      ctx.font = '12px sans-serif';
-      ctx.fillText(section.id, barStartX + i * sectionWidth + sectionWidth / 2, barY + 55);
-    });
-
-    // Inspirational quote box
-    ctx.fillStyle = 'rgba(212, 175, 55, 0.1)';
-    ctx.beginPath();
-    ctx.roundRect(40, 590, width - 80, 100, 12);
-    ctx.fill();
-
-    ctx.fillStyle = '#D4AF37';
-    ctx.font = '24px serif';
-    ctx.fillText('كلهم من أهل الجنة', width / 2, 635);
-
-    ctx.fillStyle = '#a0a0a0';
-    ctx.font = 'italic 14px sans-serif';
-    ctx.fillText('"All nine categories are people of Paradise"', width / 2, 665);
-
-    // Footer
-    ctx.fillStyle = '#555555';
-    ctx.font = '12px sans-serif';
-    ctx.fillText('Based on Sunan al-Muhtadīn by Imam al-Mawwāq', width / 2, 740);
-    ctx.fillText(`Assessed: ${new Date().toLocaleDateString()}`, width / 2, 760);
-
-    // Download
-    const link = document.createElement('a');
-    link.download = `maqamat-station-${result.station}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    setDownloading(false);
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Nine Maqāmāt Self-Assessment',
+          text: shareText,
+          url: siteUrl,
+        });
+      } catch (err) {
+        console.log('Share cancelled');
+      }
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-800 rounded-2xl p-6 max-w-md w-full">
-        <h3 className="text-xl text-amber-400 mb-4 text-center">Download Your Results</h3>
-        
-        {/* Preview */}
-        <div className="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 rounded-xl p-6 mb-6">
-          <div className="text-center">
-            <div className="text-2xl text-amber-400 font-serif mb-2">المقامات التسعة</div>
-            <div 
-              className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl font-bold text-slate-900"
-              style={{ background: station.color }}
-            >
-              {result.station}
-            </div>
-            <div className="text-xl text-amber-400 font-serif">{station.arabic}</div>
-            <div className="text-white">{station.name}</div>
-            <div className="text-slate-400 text-sm mt-2">Score: {result.totalScore}/110</div>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div 
+        className="bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-white/10"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h3 className="text-xl font-semibold text-white mb-1">Share Your Result</h3>
+            <p className="text-slate-400 text-sm">Invite others to discover their station</p>
           </div>
-        </div>
-
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
-
-        <div className="flex gap-3">
-          <button
+          <button 
             onClick={onClose}
-            className="flex-1 py-3 bg-white/10 rounded-lg text-slate-300 hover:bg-white/20 transition-all"
+            className="text-slate-400 hover:text-white text-2xl leading-none"
           >
-            Cancel
-          </button>
-          <button
-            onClick={downloadImage}
-            disabled={downloading}
-            className="flex-1 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-lg font-semibold hover:from-amber-400 hover:to-amber-500 transition-all disabled:opacity-50"
-          >
-            {downloading ? 'Creating...' : '📥 Download PNG'}
+            ×
           </button>
         </div>
+
+        {/* Preview Card */}
+        <div className="bg-slate-900 rounded-xl p-4 mb-6 border border-white/5">
+          <div className="flex items-center gap-3 mb-3">
+            <div 
+              className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold"
+              style={{ background: station.color, color: '#0a1628' }}
+            >
+              {station.id}
+            </div>
+            <div>
+              <div className="text-lg font-arabic text-amber-400">{station.arabic}</div>
+              <div className="text-sm text-slate-300">{station.name}</div>
+            </div>
+          </div>
+          <p className="text-slate-400 text-sm italic">"{station.keyPrinciple}"</p>
+        </div>
+
+        {/* Share Buttons */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <a
+            href={shareLinks.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white py-3 px-4 rounded-xl transition-all font-medium"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            WhatsApp
+          </a>
+          
+          <a
+            href={shareLinks.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-xl transition-all font-medium"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            X (Twitter)
+          </a>
+          
+          <a
+            href={shareLinks.telegram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white py-3 px-4 rounded-xl transition-all font-medium"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+            Telegram
+          </a>
+          
+          <a
+            href={shareLinks.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white py-3 px-4 rounded-xl transition-all font-medium"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            Facebook
+          </a>
+        </div>
+
+        {/* Copy Link Button */}
+        <button
+          onClick={copyLink}
+          className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all font-medium border ${
+            copied 
+              ? 'bg-emerald-600 border-emerald-500 text-white' 
+              : 'bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600'
+          }`}
+        >
+          {copied ? (
+            <>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Copied!
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+              </svg>
+              Copy Link & Message
+            </>
+          )}
+        </button>
+
+        {/* Native Share (Mobile) */}
+        {navigator.share && (
+          <button
+            onClick={handleNativeShare}
+            className="w-full mt-3 flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 px-4 rounded-xl transition-all font-medium"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            More Options...
+          </button>
+        )}
       </div>
     </div>
   );
-};
+}
 
-// History Component
-const HistoryView = ({ history, onClose, onRetake }) => {
-  const getChangeIndicator = (current, previous) => {
-    if (!previous) return null;
-    const diff = current - previous;
-    if (diff > 0) return <span className="text-emerald-400 text-xs ml-2">↑ +{diff}</span>;
-    if (diff < 0) return <span className="text-red-400 text-xs ml-2">↓ {diff}</span>;
-    return <span className="text-slate-500 text-xs ml-2">—</span>;
-  };
+// Maqamat Dashboard Component
+function MaqamatDashboard({ onBack, userStation }) {
+  const [selectedMaqam, setSelectedMaqam] = useState(null);
+  
+  const maqamatArray = Object.entries(stations).map(([id, data]) => ({
+    id: parseInt(id),
+    ...data
+  })).sort((a, b) => b.id - a.id);
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-800 rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl text-amber-400">Your Journey</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white text-2xl">&times;</button>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <button
+            onClick={onBack}
+            className="mb-6 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-slate-400 hover:bg-white/10 transition-all text-sm"
+          >
+            ← Back to Results
+          </button>
+          <div className="text-4xl text-amber-400 mb-3 font-arabic">المقامات التسعة</div>
+          <h1 className="text-2xl font-light mb-2 tracking-wide">The Nine Maqāmāt</h1>
+          <p className="text-slate-400 text-sm max-w-xl mx-auto">
+            The descending ladder of spiritual stations from al-Mawwāq's Sunan al-Muhtadīn
+          </p>
         </div>
 
-        {history.length === 0 ? (
-          <div className="text-center py-8 text-slate-400">
-            <p className="mb-4">No assessments yet</p>
-            <button
-              onClick={() => { onClose(); onRetake(); }}
-              className="px-6 py-2 bg-amber-500 text-slate-900 rounded-lg font-semibold"
-            >
-              Take Your First Assessment
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {history.map((entry, index) => {
-              const station = stations[entry.station];
-              const previousEntry = history[index + 1];
-              return (
-                <div 
-                  key={entry.date}
-                  className="bg-white/5 rounded-xl p-4 border border-white/10"
-                >
-                  <div className="flex items-center gap-4">
-                    <div 
-                      className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-slate-900 flex-shrink-0"
-                      style={{ background: station.color }}
-                    >
-                      {entry.station}
+        {/* Quranic Verse */}
+        <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-5 mb-8 text-center">
+          <p className="text-lg text-amber-400 mb-2 font-arabic">
+            ثُمَّ أَوْرَثْنَا الْكِتَابَ الَّذِينَ اصْطَفَيْنَا مِنْ عِبَادِنَا
+          </p>
+          <p className="text-sm text-slate-400 italic">
+            "Then We caused to inherit the Book those We have chosen of Our servants" — Fāṭir 35:32
+          </p>
+        </div>
+
+        {/* Category Legend */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {Object.entries(categoryInfo).map(([key, cat]) => (
+            <div key={key} className="flex items-center gap-2">
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ background: cat.color, boxShadow: `0 0 8px ${cat.color}60` }}
+              />
+              <span className="text-sm">
+                <span style={{ color: cat.color }}>{cat.arabic}</span>
+                <span className="text-slate-500 ml-2">{cat.meaning}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Maqamat List */}
+        <div className="space-y-4">
+          {maqamatArray.map((maqam) => {
+            const isUserStation = userStation === maqam.id;
+            const isExpanded = selectedMaqam === maqam.id;
+            
+            return (
+              <div
+                key={maqam.id}
+                onClick={() => setSelectedMaqam(isExpanded ? null : maqam.id)}
+                className={`
+                  rounded-xl p-5 cursor-pointer transition-all border
+                  ${isUserStation ? 'ring-2 ring-amber-400/50' : ''}
+                  ${isExpanded 
+                    ? 'bg-white/10 border-white/20' 
+                    : 'bg-white/5 border-transparent hover:bg-white/8'
+                  }
+                `}
+              >
+                <div className="flex items-start gap-4">
+                  {/* Station Number */}
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${maqam.color}, ${maqam.color}aa)`,
+                      color: '#0a1628',
+                      boxShadow: isUserStation ? `0 0 20px ${maqam.color}60` : 'none'
+                    }}
+                  >
+                    {maqam.id}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="text-xl font-arabic" style={{ color: maqam.color }}>
+                        {maqam.arabic}
+                      </span>
+                      {isUserStation && (
+                        <span className="px-2 py-0.5 bg-amber-400/20 text-amber-400 text-xs rounded-full">
+                          Your Station
+                        </span>
+                      )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center">
-                        <span className="text-white font-medium">{station.name}</span>
-                        {getChangeIndicator(entry.station, previousEntry?.station)}
-                      </div>
-                      <div className="text-slate-400 text-sm">
-                        Score: {entry.totalScore}/110
-                        {getChangeIndicator(entry.totalScore, previousEntry?.totalScore)}
-                      </div>
-                      <div className="text-slate-500 text-xs mt-1">
-                        {new Date(entry.date).toLocaleDateString('en-US', { 
-                          year: 'numeric', month: 'short', day: 'numeric',
-                          hour: '2-digit', minute: '2-digit'
-                        })}
-                      </div>
+                    <h3 className="text-lg font-medium mb-1">{maqam.name}</h3>
+                    <p className="text-sm text-slate-400">{maqam.description}</p>
+                    
+                    {/* Category Badge */}
+                    <div className="mt-2">
+                      <span 
+                        className="text-xs px-2 py-1 rounded-full"
+                        style={{ 
+                          background: `${categoryInfo[maqam.category].color}20`,
+                          color: categoryInfo[maqam.category].color
+                        }}
+                      >
+                        {maqam.categoryArabic} • {maqam.categoryName}
+                      </span>
                     </div>
-                    {index === 0 && (
-                      <span className="px-2 py-1 bg-amber-400/20 text-amber-400 rounded text-xs">Latest</span>
+
+                    {/* Expanded Content */}
+                    {isExpanded && (
+                      <div className="mt-4 pt-4 border-t border-white/10 space-y-4">
+                        {/* Key Principle */}
+                        <div className="bg-black/20 rounded-lg p-4">
+                          <div className="text-xs uppercase tracking-wider text-slate-500 mb-1">Key Principle</div>
+                          <p className="text-sm text-slate-300 italic">"{maqam.keyPrinciple}"</p>
+                        </div>
+
+                        {/* Historical Figure */}
+                        <div className="bg-amber-400/5 rounded-lg p-4">
+                          <div className="text-xs uppercase tracking-wider text-amber-400/70 mb-1">Historical Example</div>
+                          <div className="text-amber-400 font-medium mb-1">{maqam.figure}</div>
+                          <p className="text-sm text-slate-400">{maqam.figureStory}</p>
+                        </div>
+
+                        {/* Path Forward */}
+                        <div>
+                          <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Path Forward</div>
+                          <div className="grid gap-2">
+                            {maqam.steps.map((step, i) => (
+                              <div key={i} className="flex items-start gap-2 text-sm">
+                                <span 
+                                  className="w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0"
+                                  style={{ background: `${maqam.color}30`, color: maqam.color }}
+                                >
+                                  {i + 1}
+                                </span>
+                                <span className="text-slate-300">{step}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
 
-        {history.length > 0 && (
-          <div className="mt-6 pt-4 border-t border-white/10">
-            <div className="flex justify-between text-sm text-slate-400 mb-2">
-              <span>Total Assessments: {history.length}</span>
-              <span>Best Station: {Math.max(...history.map(h => h.station))}</span>
-            </div>
-            {history.length >= 2 && (
-              <div className="text-center text-sm">
-                {history[0].station > history[history.length - 1].station ? (
-                  <span className="text-emerald-400">🌟 Alhamdulillah! You've progressed from Station {history[history.length - 1].station} to Station {history[0].station}</span>
-                ) : history[0].station === history[history.length - 1].station ? (
-                  <span className="text-amber-400">Maintaining Station {history[0].station} — keep striving!</span>
-                ) : (
-                  <span className="text-slate-400">Keep working on your spiritual growth. Every effort counts.</span>
-                )}
+                  {/* Expand Icon */}
+                  <div className="text-slate-500 text-xl">
+                    {isExpanded ? '−' : '+'}
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
-        )}
+            );
+          })}
+        </div>
+
+        {/* Key Insight */}
+        <div className="mt-8 text-center bg-gradient-to-r from-amber-400/10 via-emerald-400/10 to-orange-400/10 rounded-xl p-6 border border-white/10">
+          <p className="text-2xl text-amber-400 font-arabic mb-2">كلهم من أهل الجنة</p>
+          <p className="text-lg text-slate-300 mb-2">All Nine Categories Are People of Paradise</p>
+          <p className="text-sm text-slate-500 max-w-lg mx-auto">
+            "Our outstripper is a true outstripper, our moderate one has salvation, 
+            and the one who oppressed himself will be forgiven." — Prophet ﷺ
+          </p>
+        </div>
+
+        {/* Footer */}
+        <footer className="text-center mt-10 pt-6 border-t border-white/10 text-slate-600 text-xs">
+          Based on <em>Sunan al-Muhtadīn</em> by Imam al-Mawwāq (d. 897 AH)
+          <br />As taught by Sheikh Hamza Yusuf • DEENSTREAM Turkey 2015
+        </footer>
       </div>
     </div>
   );
-};
+}
 
-export default function MaqamatAssessment() {
+function App() {
   const [currentSection, setCurrentSection] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [result, setResult] = useState(null);
   const [started, setStarted] = useState(false);
-  const [history, setHistory] = useState([]);
-  const [showHistory, setShowHistory] = useState(false);
-  const [showShareCard, setShowShareCard] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // Load history on mount
-  useEffect(() => {
-    const loadHistory = async () => {
-      try {
-        const stored = await window.storage.get('maqamat-history');
-        if (stored && stored.value) {
-          setHistory(JSON.parse(stored.value));
-        }
-      } catch (e) {
-        console.log('No previous history found');
-      }
-      setLoading(false);
-    };
-    loadHistory();
-  }, []);
-
-  // Save result to history
-  const saveResult = async (newResult) => {
-    const entry = {
-      ...newResult,
-      date: new Date().toISOString(),
-      answers: { ...answers }
-    };
-    const newHistory = [entry, ...history].slice(0, 50); // Keep last 50
-    setHistory(newHistory);
-    try {
-      await window.storage.set('maqamat-history', JSON.stringify(newHistory));
-    } catch (e) {
-      console.error('Failed to save history:', e);
-    }
-  };
 
   const handleAnswer = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -801,14 +901,15 @@ export default function MaqamatAssessment() {
 
   const canProceed = () => sections[currentSection].questions.every(q => answers[q.id] !== undefined);
 
-  const handleNext = async () => {
+  const handleNext = () => {
     if (currentSection < sections.length - 1) {
       setCurrentSection(prev => prev + 1);
+      window.scrollTo(0, 0);
     } else {
       const calculatedResult = calculateStation(answers);
       setResult(calculatedResult);
-      await saveResult(calculatedResult);
       setShowResults(true);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -816,108 +917,59 @@ export default function MaqamatAssessment() {
     setAnswers({});
     setCurrentSection(0);
     setShowResults(false);
+    setShowDashboard(false);
+    setShowShareModal(false);
     setResult(null);
     setStarted(false);
   };
 
-  const clearHistory = async () => {
-    if (confirm('Are you sure you want to clear all your assessment history?')) {
-      setHistory([]);
-      try {
-        await window.storage.delete('maqamat-history');
-      } catch (e) {
-        console.error('Failed to clear history:', e);
-      }
-    }
-  };
-
-  if (loading) {
+  // Show Dashboard
+  if (showDashboard && result) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-amber-400 text-xl">Loading...</div>
-      </div>
+      <MaqamatDashboard 
+        onBack={() => { setShowDashboard(false); window.scrollTo(0, 0); }}
+        userStation={result.station}
+      />
     );
   }
 
+  // Landing Page
   if (!started) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-6 flex items-center justify-center">
         <div className="max-w-xl text-center">
-          <div className="text-5xl text-amber-400 mb-4 font-serif">المقامات التسعة</div>
+          <div className="text-5xl text-amber-400 mb-4 font-arabic">المقامات التسعة</div>
           <h1 className="text-3xl font-light mb-2 tracking-wide">The Nine Maqāmāt</h1>
           <h2 className="text-lg text-slate-400 mb-8">Self-Assessment Tool</h2>
-          
           <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-6 mb-8 text-left">
-            <p className="text-xl text-amber-400 text-center mb-3 font-serif">
+            <p className="text-xl text-amber-400 text-center mb-3 font-arabic">
               فَمِنْهُمْ ظَالِمٌ لِّنَفْسِهِ وَمِنْهُم مُّقْتَصِدٌ وَمِنْهُمْ سَابِقٌ بِالْخَيْرَاتِ
             </p>
             <p className="text-sm text-slate-400 text-center italic">
               "Among them is he who wrongs himself, he who is moderate, and he who outstrips in good" — Fāṭir 35:32
             </p>
           </div>
-
-          {history.length > 0 && (
-            <div className="bg-emerald-900/20 border border-emerald-700/30 rounded-xl p-4 mb-6">
-              <div className="flex items-center justify-between">
-                <div className="text-left">
-                  <div className="text-emerald-400 text-sm font-medium">Your Last Assessment</div>
-                  <div className="text-white">Station {history[0].station} • Score: {history[0].totalScore}/110</div>
-                  <div className="text-slate-500 text-xs">
-                    {new Date(history[0].date).toLocaleDateString()}
-                  </div>
-                </div>
-                <div 
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold text-slate-900"
-                  style={{ background: stations[history[0].station].color }}
-                >
-                  {history[0].station}
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="bg-white/5 rounded-xl p-5 mb-6 text-left text-sm">
             <h3 className="text-amber-400 mb-3 font-semibold">Before You Begin:</h3>
             <ul className="text-slate-300 space-y-2 list-disc pl-5">
               <li>This is for <strong className="text-white">personal reflection only</strong></li>
               <li>All nine stations are within Islam and Paradise</li>
               <li>Be honest — this works only with sincerity</li>
-              <li>Your results are saved to track your spiritual journey</li>
             </ul>
           </div>
-
-          <p className="text-slate-500 mb-6 text-sm">22 questions • ~10 minutes</p>
-
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={() => setStarted(true)}
-              className="w-full px-10 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-lg font-semibold text-lg hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg hover:shadow-amber-500/25"
-            >
-              {history.length > 0 ? 'Retake Assessment' : 'Begin Assessment'}
-            </button>
-            
-            {history.length > 0 && (
-              <button
-                onClick={() => setShowHistory(true)}
-                className="w-full px-6 py-3 bg-white/5 border border-white/20 rounded-lg text-slate-300 hover:bg-white/10 transition-all"
-              >
-                📊 View Your Journey ({history.length} assessment{history.length !== 1 ? 's' : ''})
-              </button>
-            )}
-          </div>
-
-          {showHistory && (
-            <HistoryView 
-              history={history} 
-              onClose={() => setShowHistory(false)}
-              onRetake={() => setStarted(true)}
-            />
-          )}
+          <p className="text-slate-500 mb-6 text-sm">22 questions • ~10 minutes • Based on al-Mawwāq's Sunan al-Muhtadīn</p>
+          <button
+            onClick={() => setStarted(true)}
+            className="px-10 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-lg font-semibold text-lg hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg hover:shadow-amber-500/25"
+          >
+            Begin Assessment
+          </button>
         </div>
       </div>
     );
   }
 
+  // Results Page
   if (showResults && result) {
     const station = stations[result.station];
     const categoryColors = {
@@ -926,11 +978,6 @@ export default function MaqamatAssessment() {
       sabiq: { bg: 'bg-amber-900/20', border: 'border-amber-600/50', text: 'text-amber-400' }
     };
     const colors = categoryColors[station.category];
-
-    // Compare with previous
-    const previousResult = history.length > 1 ? history[1] : null;
-    const stationChange = previousResult ? result.station - previousResult.station : null;
-    const scoreChange = previousResult ? result.totalScore - previousResult.totalScore : null;
     
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-8">
@@ -943,37 +990,17 @@ export default function MaqamatAssessment() {
             >
               {result.station}
             </div>
-            <div className="text-3xl text-amber-400 mb-2 font-serif">{station.arabic}</div>
+            <div className="text-3xl text-amber-400 mb-2 font-arabic">{station.arabic}</div>
             <h1 className="text-2xl font-light mb-3">{station.name}</h1>
             <span className={`inline-block px-4 py-1.5 rounded-full text-sm ${colors.bg} ${colors.border} ${colors.text} border`}>
               {station.categoryArabic} • {station.categoryName}
             </span>
-
-            {/* Progress from last assessment */}
-            {previousResult && (
-              <div className="mt-4 p-3 bg-white/5 rounded-lg inline-block">
-                {stationChange > 0 ? (
-                  <span className="text-emerald-400">🌟 Masha'Allah! Up {stationChange} station{stationChange !== 1 ? 's' : ''} from last time!</span>
-                ) : stationChange < 0 ? (
-                  <span className="text-amber-400">Stay committed. Down {Math.abs(stationChange)} station{Math.abs(stationChange) !== 1 ? 's' : ''} — keep striving.</span>
-                ) : (
-                  <span className="text-slate-400">Same station as before. {scoreChange > 0 ? `Score improved by ${scoreChange} points!` : 'Keep working on growth.'}</span>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="bg-white/5 rounded-xl p-5 mb-6">
             <div className="flex justify-between items-center mb-3">
               <span className="text-amber-400 font-semibold">Your Score</span>
-              <div className="text-right">
-                <span className="text-xl">{result.totalScore}/110</span>
-                {scoreChange !== null && (
-                  <span className={`ml-2 text-sm ${scoreChange > 0 ? 'text-emerald-400' : scoreChange < 0 ? 'text-red-400' : 'text-slate-500'}`}>
-                    {scoreChange > 0 ? `+${scoreChange}` : scoreChange < 0 ? scoreChange : '—'}
-                  </span>
-                )}
-              </div>
+              <span className="text-xl">{result.totalScore}/110</span>
             </div>
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
               {sections.map(s => (
@@ -1025,29 +1052,38 @@ export default function MaqamatAssessment() {
           )}
 
           <div className="text-center bg-amber-400/5 rounded-xl p-6 mb-6">
-            <p className="text-xl text-amber-400 font-serif mb-1">كلهم من أهل الجنة</p>
+            <p className="text-xl text-amber-400 font-arabic mb-1">كلهم من أهل الجنة</p>
             <p className="text-slate-400 text-sm">"All nine categories are people of Paradise"</p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-3">
+            {/* Share Button - Primary */}
             <button
-              onClick={() => setShowShareCard(true)}
-              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-lg font-semibold hover:from-amber-400 hover:to-amber-500 transition-all"
+              onClick={() => setShowShareModal(true)}
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg hover:shadow-emerald-500/25"
             >
-              📥 Download Results
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              Share Your Result
             </button>
-            <button
-              onClick={() => setShowHistory(true)}
-              className="px-6 py-3 bg-white/5 border border-white/20 rounded-lg text-slate-300 hover:bg-white/10 transition-all"
-            >
-              📊 View Journey
-            </button>
-            <button
-              onClick={resetAssessment}
-              className="px-6 py-3 bg-white/5 border border-white/20 rounded-lg text-slate-300 hover:bg-white/10 transition-all"
-            >
-              ↻ Retake
-            </button>
+
+            {/* Secondary Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => { setShowDashboard(true); window.scrollTo(0, 0); }}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl font-semibold hover:from-amber-400 hover:to-amber-500 transition-all"
+              >
+                📖 Maqāmāt Explained
+              </button>
+              <button
+                onClick={resetAssessment}
+                className="flex-1 px-6 py-3 bg-white/5 border border-white/20 rounded-xl text-slate-300 hover:bg-white/10 transition-all"
+              >
+                ↺ Retake Assessment
+              </button>
+            </div>
           </div>
 
           <footer className="text-center mt-10 pt-6 border-t border-white/10 text-slate-600 text-xs">
@@ -1055,25 +1091,18 @@ export default function MaqamatAssessment() {
           </footer>
         </div>
 
-        {showShareCard && (
-          <ShareableResultCard 
-            result={result} 
-            station={station} 
-            onClose={() => setShowShareCard(false)} 
-          />
-        )}
-
-        {showHistory && (
-          <HistoryView 
-            history={history} 
-            onClose={() => setShowHistory(false)}
-            onRetake={resetAssessment}
+        {/* Share Modal */}
+        {showShareModal && (
+          <ShareModal 
+            station={{ ...station, id: result.station }}
+            onClose={() => setShowShareModal(false)}
           />
         )}
       </div>
     );
   }
 
+  // Questions Page
   const section = sections[currentSection];
   
   return (
@@ -1093,7 +1122,7 @@ export default function MaqamatAssessment() {
         </div>
 
         <div className="text-center mb-6 pb-4 border-b border-white/10">
-          <div className="text-2xl text-amber-400 font-serif mb-1">{section.arabic}</div>
+          <div className="text-2xl text-amber-400 font-arabic mb-1">{section.arabic}</div>
           <h2 className="text-xl font-light mb-1">{section.title}</h2>
           <p className="text-slate-400 text-sm">{section.description}</p>
         </div>
@@ -1147,7 +1176,7 @@ export default function MaqamatAssessment() {
 
         <div className="flex justify-between mt-8 pt-4 border-t border-white/10">
           <button
-            onClick={() => setCurrentSection(prev => prev - 1)}
+            onClick={() => { setCurrentSection(prev => prev - 1); window.scrollTo(0, 0); }}
             disabled={currentSection === 0}
             className={`px-5 py-2.5 rounded-lg text-sm ${currentSection === 0 ? 'bg-white/5 text-slate-600 cursor-not-allowed' : 'bg-white/5 text-slate-300 hover:bg-white/10'}`}
           >
@@ -1169,3 +1198,5 @@ export default function MaqamatAssessment() {
     </div>
   );
 }
+
+export default App;
