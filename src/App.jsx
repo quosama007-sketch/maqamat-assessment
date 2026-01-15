@@ -1,6 +1,68 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 // ============================================
+// GOOGLE ANALYTICS CONFIGURATION
+// ============================================
+// Replace 'G-XXXXXXXXXX' with your actual GA4 Measurement ID
+const GA_MEASUREMENT_ID = 'G-686QG2RQN9';
+
+// Initialize Google Analytics
+const initGA = () => {
+  if (typeof window !== 'undefined' && !window.gaInitialized) {
+    // Add gtag script
+    const script = document.createElement('script');
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    script.async = true;
+    document.head.appendChild(script);
+
+    // Initialize gtag
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function() { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_MEASUREMENT_ID, {
+      page_title: 'Nine Maqāmāt Assessment',
+      send_page_view: true
+    });
+    
+    window.gaInitialized = true;
+  }
+};
+
+// Track custom events
+const trackEvent = (eventName, parameters = {}) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', eventName, parameters);
+  }
+};
+
+// Analytics event names
+const GA_EVENTS = {
+  // User Journey Events
+  ASSESSMENT_STARTED: 'assessment_started',
+  SECTION_VIEWED: 'section_viewed',
+  SECTION_COMPLETED: 'section_completed',
+  QUESTION_ANSWERED: 'question_answered',
+  ASSESSMENT_COMPLETED: 'assessment_completed',
+  
+  // Result Events
+  RESULT_VIEWED: 'result_viewed',
+  STATION_ACHIEVED: 'station_achieved',
+  
+  // Interaction Events
+  LANGUAGE_CHANGED: 'language_changed',
+  SHARE_CLICKED: 'share_clicked',
+  SHARE_PLATFORM: 'share_platform',
+  DOWNLOAD_CLICKED: 'download_clicked',
+  DOWNLOAD_COMPLETED: 'download_completed',
+  DASHBOARD_VIEWED: 'dashboard_viewed',
+  RETAKE_CLICKED: 'retake_clicked',
+  
+  // Engagement Events
+  TIME_ON_SECTION: 'time_on_section',
+  SCROLL_DEPTH: 'scroll_depth'
+};
+
+// ============================================
 // BILINGUAL CONTENT (English & Urdu)
 // ============================================
 
@@ -773,7 +835,21 @@ function ShareModal({ station, onClose, lang, t }) {
     telegram: `https://t.me/share/url?url=${encodeURIComponent(siteUrl)}&text=${encodeURIComponent(shareText)}`,
   };
 
+  const handlePlatformClick = (platform) => {
+    trackEvent(GA_EVENTS.SHARE_PLATFORM, {
+      platform: platform,
+      station_id: station.id,
+      language: lang
+    });
+  };
+
   const copyLink = async () => {
+    trackEvent(GA_EVENTS.SHARE_PLATFORM, {
+      platform: 'copy_link',
+      station_id: station.id,
+      language: lang
+    });
+    
     try {
       await navigator.clipboard.writeText(`${shareText}\n${siteUrl}`);
       setCopied(true);
@@ -818,13 +894,13 @@ function ShareModal({ station, onClose, lang, t }) {
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-4">
-          <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white py-3 px-4 rounded-xl transition-all font-medium">
+          <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => handlePlatformClick('whatsapp')} className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white py-3 px-4 rounded-xl transition-all font-medium">
             WhatsApp
           </a>
-          <a href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-xl transition-all font-medium">
+          <a href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" onClick={() => handlePlatformClick('twitter')} className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-xl transition-all font-medium">
             X
           </a>
-          <a href={shareLinks.telegram} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white py-3 px-4 rounded-xl transition-all font-medium">
+          <a href={shareLinks.telegram} target="_blank" rel="noopener noreferrer" onClick={() => handlePlatformClick('telegram')} className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white py-3 px-4 rounded-xl transition-all font-medium">
             Telegram
           </a>
         </div>
@@ -1004,14 +1080,36 @@ export default function MaqamatAssessment() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [result, setResult] = useState(null);
   const [downloading, setDownloading] = useState(false);
+  const [sectionStartTime, setSectionStartTime] = useState(null);
   const resultCardRef = useRef(null);
 
   const t = content[lang];
   const sections = sectionsData[lang];
   const stations = stationsData[lang];
 
+  // Initialize Google Analytics on mount
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  // Track section time
+  useEffect(() => {
+    if (started && !showResults) {
+      setSectionStartTime(Date.now());
+    }
+  }, [currentSection, started]);
+
   const handleAnswer = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
+    
+    // Track question answered
+    trackEvent(GA_EVENTS.QUESTION_ANSWERED, {
+      question_id: questionId,
+      answer_value: value,
+      section_id: sections[currentSection]?.id,
+      section_number: currentSection + 1,
+      language: lang
+    });
   };
 
   const getCurrentProgress = () => {
@@ -1023,18 +1121,70 @@ export default function MaqamatAssessment() {
   const canProceed = () => sections[currentSection].questions.every(q => answers[q.id] !== undefined);
 
   const handleNext = () => {
+    // Track time spent on section
+    if (sectionStartTime) {
+      const timeSpent = Math.round((Date.now() - sectionStartTime) / 1000);
+      trackEvent(GA_EVENTS.TIME_ON_SECTION, {
+        section_id: sections[currentSection]?.id,
+        section_number: currentSection + 1,
+        time_seconds: timeSpent,
+        language: lang
+      });
+    }
+
+    // Track section completed
+    trackEvent(GA_EVENTS.SECTION_COMPLETED, {
+      section_id: sections[currentSection]?.id,
+      section_number: currentSection + 1,
+      language: lang
+    });
+
     if (currentSection < sections.length - 1) {
       setCurrentSection(prev => prev + 1);
+      
+      // Track next section viewed
+      trackEvent(GA_EVENTS.SECTION_VIEWED, {
+        section_id: sections[currentSection + 1]?.id,
+        section_number: currentSection + 2,
+        language: lang
+      });
+      
       window.scrollTo(0, 0);
     } else {
       const calculatedResult = calculateStation(answers, sections);
       setResult(calculatedResult);
       setShowResults(true);
+      
+      // Track assessment completed
+      trackEvent(GA_EVENTS.ASSESSMENT_COMPLETED, {
+        total_score: calculatedResult.score,
+        station_achieved: calculatedResult.station,
+        language: lang,
+        completion_time: Date.now()
+      });
+      
+      // Track station achieved (separate event for funnel analysis)
+      const station = stationsData[lang].find(s => s.id === calculatedResult.station);
+      trackEvent(GA_EVENTS.STATION_ACHIEVED, {
+        station_id: calculatedResult.station,
+        station_name: station?.name,
+        station_category: station?.category,
+        total_score: calculatedResult.score,
+        language: lang
+      });
+      
       window.scrollTo(0, 0);
     }
   };
 
   const resetAssessment = () => {
+    // Track retake
+    trackEvent(GA_EVENTS.RETAKE_CLICKED, {
+      previous_station: result?.station,
+      previous_score: result?.score,
+      language: lang
+    });
+    
     setAnswers({});
     setCurrentSection(0);
     setShowResults(false);
@@ -1046,11 +1196,27 @@ export default function MaqamatAssessment() {
 
   const toggleLanguage = () => {
     const newLang = lang === 'en' ? 'ur' : 'en';
+    
+    // Track language change
+    trackEvent(GA_EVENTS.LANGUAGE_CHANGED, {
+      from_language: lang,
+      to_language: newLang,
+      current_screen: showResults ? 'results' : (started ? 'assessment' : 'welcome'),
+      current_section: started && !showResults ? currentSection + 1 : null
+    });
+    
     setLang(newLang);
   };
 
   // Download as PNG
   const downloadResultAsPNG = async () => {
+    // Track download clicked
+    trackEvent(GA_EVENTS.DOWNLOAD_CLICKED, {
+      station_id: result?.station,
+      score: result?.score,
+      language: lang
+    });
+    
     setDownloading(true);
     
     try {
@@ -1113,6 +1279,13 @@ export default function MaqamatAssessment() {
       link.href = canvas.toDataURL('image/png');
       link.click();
       
+      // Track download completed
+      trackEvent(GA_EVENTS.DOWNLOAD_COMPLETED, {
+        station_id: result?.station,
+        score: result?.score,
+        language: lang
+      });
+      
       // Cleanup
       document.body.removeChild(container);
     } catch (error) {
@@ -1123,6 +1296,27 @@ export default function MaqamatAssessment() {
     
     setDownloading(false);
   };
+
+  // Track dashboard view when it opens
+  useEffect(() => {
+    if (showDashboard && result) {
+      trackEvent(GA_EVENTS.DASHBOARD_VIEWED, {
+        from_station: result?.station,
+        language: lang
+      });
+    }
+  }, [showDashboard]);
+
+  // Track results view when shown
+  useEffect(() => {
+    if (showResults && result) {
+      trackEvent(GA_EVENTS.RESULT_VIEWED, {
+        station_id: result?.station,
+        score: result?.score,
+        language: lang
+      });
+    }
+  }, [showResults]);
 
   // Show Dashboard
   if (showDashboard && result) {
@@ -1180,7 +1374,18 @@ export default function MaqamatAssessment() {
           <p className="text-center text-amber-200/60 italic mb-8">{t.honesty}</p>
 
           <button
-            onClick={() => setStarted(true)}
+            onClick={() => {
+              trackEvent(GA_EVENTS.ASSESSMENT_STARTED, {
+                language: lang,
+                timestamp: Date.now()
+              });
+              trackEvent(GA_EVENTS.SECTION_VIEWED, {
+                section_id: sections[0]?.id,
+                section_number: 1,
+                language: lang
+              });
+              setStarted(true);
+            }}
             className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl text-lg font-semibold hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/25"
           >
             {t.startBtn}
@@ -1267,7 +1472,14 @@ export default function MaqamatAssessment() {
           {/* Action Buttons */}
           <div className="space-y-3 mb-8">
             <button
-              onClick={() => setShowShareModal(true)}
+              onClick={() => {
+                trackEvent(GA_EVENTS.SHARE_CLICKED, {
+                  station_id: result?.station,
+                  score: result?.score,
+                  language: lang
+                });
+                setShowShareModal(true);
+              }}
               className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-400 hover:to-teal-400 transition-all"
             >
               {t.buttons.share}
