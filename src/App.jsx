@@ -54,6 +54,7 @@ const trackEvent = (eventName, parameters = {}) => {
 const GA_EVENTS = {
   // User Journey Events
   ASSESSMENT_STARTED: 'assessment_started',
+  GENDER_SELECTED: 'gender_selected',
   SECTION_VIEWED: 'section_viewed',
   SECTION_COMPLETED: 'section_completed',
   QUESTION_ANSWERED: 'question_answered',
@@ -1511,6 +1512,7 @@ function MaqamatDashboard({ onBack, userStation, stations, lang, t }) {
 
 export default function MaqamatAssessment() {
   const [lang, setLang] = useState('en');
+  const [gender, setGender] = useState(null); // 'male' or 'female'
   const [started, setStarted] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -1525,6 +1527,89 @@ export default function MaqamatAssessment() {
   const t = content[lang];
   const sections = sectionsData[lang];
   const stations = stationsData[lang];
+
+  // Gender-specific themes
+  const genderThemes = {
+    male: {
+      primary: '#3B82F6', // Blue
+      secondary: '#1E40AF',
+      accent: '#60A5FA',
+      gradient: 'from-blue-900 via-slate-800 to-blue-900',
+      buttonGradient: 'from-blue-500 to-cyan-500',
+      buttonHover: 'from-blue-400 to-cyan-400',
+      cardBg: 'bg-blue-500/10',
+      cardBorder: 'border-blue-400/30',
+      textAccent: 'text-blue-400',
+      badgeBg: 'bg-blue-400',
+    },
+    female: {
+      primary: '#EC4899', // Pink
+      secondary: '#BE185D',
+      accent: '#F472B6',
+      gradient: 'from-pink-900 via-slate-800 to-pink-900',
+      buttonGradient: 'from-pink-500 to-rose-500',
+      buttonHover: 'from-pink-400 to-rose-400',
+      cardBg: 'bg-pink-500/10',
+      cardBorder: 'border-pink-400/30',
+      textAccent: 'text-pink-400',
+      badgeBg: 'bg-pink-400',
+    }
+  };
+
+  // Gender-specific content
+  const genderContent = {
+    en: {
+      male: {
+        select: 'Brother',
+        greeting: 'Dear Brother',
+        yourStation: 'Your Station',
+        result: 'Your Spiritual Station',
+        encouragement: 'May Allah elevate your station',
+      },
+      female: {
+        select: 'Sister',
+        greeting: 'Dear Sister',
+        yourStation: 'Your Station',
+        result: 'Your Spiritual Station',
+        encouragement: 'May Allah elevate your station',
+      }
+    },
+    ur: {
+      male: {
+        select: 'بھائی',
+        greeting: 'محترم بھائی',
+        yourStation: 'آپ کا مقام',
+        result: 'آپ کا روحانی مقام',
+        encouragement: 'اللہ آپ کا مقام بلند کرے',
+      },
+      female: {
+        select: 'بہن',
+        greeting: 'محترمہ بہن',
+        yourStation: 'آپ کا مقام',
+        result: 'آپ کا روحانی مقام',
+        encouragement: 'اللہ آپ کا مقام بلند کرے',
+      }
+    },
+    ar: {
+      male: {
+        select: 'أخ',
+        greeting: 'أخي الكريم',
+        yourStation: 'مقامك',
+        result: 'مقامك الروحي',
+        encouragement: 'رفع الله مقامك',
+      },
+      female: {
+        select: 'أخت',
+        greeting: 'أختي الكريمة',
+        yourStation: 'مقامكِ',
+        result: 'مقامكِ الروحي',
+        encouragement: 'رفع الله مقامكِ',
+      }
+    }
+  };
+
+  const theme = gender ? genderThemes[gender] : null;
+  const genderText = gender ? genderContent[lang][gender] : null;
 
   // Initialize Google Analytics on mount
   useEffect(() => {
@@ -1599,6 +1684,7 @@ export default function MaqamatAssessment() {
         total_score: calculatedResult.score,
         station_achieved: calculatedResult.station,
         language: lang,
+        gender: gender,
         completion_time: Date.now()
       });
       
@@ -1609,7 +1695,8 @@ export default function MaqamatAssessment() {
         station_name: station?.name,
         station_category: station?.category,
         total_score: calculatedResult.score,
-        language: lang
+        language: lang,
+        gender: gender
       });
       
       window.scrollTo(0, 0);
@@ -1621,7 +1708,8 @@ export default function MaqamatAssessment() {
     trackEvent(GA_EVENTS.RETAKE_CLICKED, {
       previous_station: result?.station,
       previous_score: result?.score,
-      language: lang
+      language: lang,
+      gender: gender
     });
     
     setAnswers({});
@@ -1630,6 +1718,7 @@ export default function MaqamatAssessment() {
     setShowDashboard(false);
     setShowShareModal(false);
     setResult(null);
+    setGender(null);
     setStarted(false);
   };
 
@@ -1651,10 +1740,18 @@ export default function MaqamatAssessment() {
     trackEvent(GA_EVENTS.DOWNLOAD_CLICKED, {
       station_id: result?.station,
       score: result?.score,
-      language: lang
+      language: lang,
+      gender: gender
     });
     
     setDownloading(true);
+    
+    // Gender-based colors for PNG
+    const pngColors = {
+      male: { primary: '#3B82F6', secondary: '#1E40AF', bg1: '#0f172a', bg2: '#1e3a5f' },
+      female: { primary: '#EC4899', secondary: '#BE185D', bg1: '#0f172a', bg2: '#3f1f3f' }
+    };
+    const colors = gender ? pngColors[gender] : { primary: '#fbbf24', secondary: '#d97706', bg1: '#0f172a', bg2: '#1e293b' };
     
     try {
       // Dynamically import html2canvas
@@ -1669,33 +1766,35 @@ export default function MaqamatAssessment() {
       
       // Render the result card
       const station = stations.find(s => s.id === result.station);
+      const genderLabel = gender ? (lang === 'ar' ? genderContent[lang][gender].greeting : genderContent[lang][gender].greeting) : '';
       const cardHTML = `
-        <div id="download-card" style="width: 600px; height: 800px; background: linear-gradient(to bottom, #0f172a, #1e293b, #0f172a); padding: 32px; font-family: Georgia, serif; color: white; display: flex; flex-direction: column;">
+        <div id="download-card" style="width: 600px; height: 850px; background: linear-gradient(to bottom, ${colors.bg1}, ${colors.bg2}, ${colors.bg1}); padding: 32px; font-family: Georgia, serif; color: white; display: flex; flex-direction: column;">
           <div style="text-align: center; margin-bottom: 24px;">
-            <div style="font-size: 28px; color: #fbbf24; margin-bottom: 8px; font-family: 'Times New Roman', serif;">المقامات التسعة</div>
-            <div style="font-size: 20px; color: rgba(255,255,255,0.8);">${lang === 'ur' ? 'نو مقامات کا جائزہ' : 'Nine Maqāmāt Assessment'}</div>
+            <div style="font-size: 28px; color: ${colors.primary}; margin-bottom: 8px; font-family: 'Times New Roman', serif;">المقامات التسعة</div>
+            <div style="font-size: 20px; color: rgba(255,255,255,0.8);">${lang === 'ar' ? 'تقييم المقامات التسعة' : (lang === 'ur' ? 'نو مقامات کا جائزہ' : 'Nine Maqāmāt Assessment')}</div>
+            ${genderLabel ? `<div style="font-size: 16px; color: ${colors.primary}; margin-top: 8px;">${genderLabel}</div>` : ''}
           </div>
           <div style="display: flex; justify-content: center; margin-bottom: 24px;">
-            <div style="width: 120px; height: 120px; border-radius: 50%; background: ${station.color}; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: #0f172a;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, ${colors.primary}, ${colors.secondary}); display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: white;">
               ${station.id}
             </div>
           </div>
           <div style="text-align: center; margin-bottom: 24px;">
-            <div style="font-size: 32px; color: #fbbf24; margin-bottom: 8px;">${station.arabic}</div>
+            <div style="font-size: 32px; color: ${colors.primary}; margin-bottom: 8px;">${station.arabic}</div>
             <div style="font-size: 24px; color: white; margin-bottom: 8px;">${station.name}</div>
             <div style="font-size: 16px; color: #94a3b8;">${station.categoryMeaning}</div>
           </div>
           <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;">
             <div style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">${t.results.score}</div>
-            <div style="font-size: 28px; font-weight: bold; color: #fbbf24;">${result.score} <span style="font-size: 16px; color: #64748b;">${t.results.outOf}</span></div>
+            <div style="font-size: 28px; font-weight: bold; color: ${colors.primary};">${result.score} <span style="font-size: 16px; color: #64748b;">${t.results.outOf}</span></div>
           </div>
-          <div style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 20px; flex-grow: 1;">
-            <div style="color: #fbbf24; font-size: 14px; margin-bottom: 8px;">${t.results.keyPrinciple}</div>
+          <div style="background: ${colors.primary}15; border: 1px solid ${colors.primary}50; border-radius: 12px; padding: 20px; flex-grow: 1;">
+            <div style="color: ${colors.primary}; font-size: 14px; margin-bottom: 8px;">${t.results.keyPrinciple}</div>
             <p style="color: rgba(255,255,255,0.9); font-size: 18px; font-style: italic; line-height: 1.6;">"${station.keyPrinciple}"</p>
           </div>
           <div style="text-align: center; color: #64748b; font-size: 12px; margin-top: 24px;">
             <div style="margin-bottom: 4px;">كلهم من أهل الجنة</div>
-            <div>${lang === 'ur' ? 'امام الموّاق کی سنن المہتدین کی بنیاد پر' : 'Based on Sunan al-Muhtadīn by Imam al-Mawwāq'}</div>
+            <div>${lang === 'ar' ? 'بناءً على سنن المهتدين للإمام الموّاق' : (lang === 'ur' ? 'امام الموّاق کی سنن المہتدین کی بنیاد پر' : 'Based on Sunan al-Muhtadīn by Imam al-Mawwāq')}</div>
           </div>
         </div>
       `;
@@ -1704,7 +1803,7 @@ export default function MaqamatAssessment() {
       const cardElement = container.querySelector('#download-card');
       
       const canvas = await html2canvas(cardElement, {
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.bg1,
         scale: 2,
         useCORS: true,
         logging: false
@@ -1720,7 +1819,8 @@ export default function MaqamatAssessment() {
       trackEvent(GA_EVENTS.DOWNLOAD_COMPLETED, {
         station_id: result?.station,
         score: result?.score,
-        language: lang
+        language: lang,
+        gender: gender
       });
       
       // Cleanup
@@ -1728,7 +1828,7 @@ export default function MaqamatAssessment() {
     } catch (error) {
       console.error('Download failed:', error);
       // Fallback: show alert
-      alert(lang === 'ur' ? 'ڈاؤن لوڈ میں مسئلہ ہوا۔ براہ کرم اسکرین شاٹ لیں۔' : 'Download failed. Please take a screenshot instead.');
+      alert(lang === 'ar' ? 'فشل التحميل. يرجى أخذ لقطة شاشة.' : (lang === 'ur' ? 'ڈاؤن لوڈ میں مسئلہ ہوا۔ براہ کرم اسکرین شاٹ لیں۔' : 'Download failed. Please take a screenshot instead.'));
     }
     
     setDownloading(false);
@@ -1805,10 +1905,55 @@ export default function MaqamatAssessment() {
 
           <p className="text-center text-amber-200/60 italic mb-8">{t.honesty}</p>
 
+          {/* Gender Selection */}
+          <div className="mb-6">
+            <p className="text-center text-slate-400 mb-4">
+              {lang === 'ar' ? 'اختر للمتابعة' : (lang === 'ur' ? 'جاری رکھنے کے لیے منتخب کریں' : 'Select to continue')}
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => {
+                  setGender('male');
+                  trackEvent(GA_EVENTS.GENDER_SELECTED, {
+                    gender: 'male',
+                    language: lang
+                  });
+                }}
+                className={`py-4 px-6 rounded-xl text-lg font-semibold transition-all border-2 ${
+                  gender === 'male' 
+                    ? 'bg-blue-500/20 border-blue-400 text-blue-400 shadow-lg shadow-blue-500/20' 
+                    : 'bg-white/5 border-white/20 text-slate-300 hover:bg-blue-500/10 hover:border-blue-400/50'
+                }`}
+              >
+                <span className="text-2xl mb-2 block">👤</span>
+                {genderContent[lang].male.select}
+              </button>
+              <button
+                onClick={() => {
+                  setGender('female');
+                  trackEvent(GA_EVENTS.GENDER_SELECTED, {
+                    gender: 'female',
+                    language: lang
+                  });
+                }}
+                className={`py-4 px-6 rounded-xl text-lg font-semibold transition-all border-2 ${
+                  gender === 'female' 
+                    ? 'bg-pink-500/20 border-pink-400 text-pink-400 shadow-lg shadow-pink-500/20' 
+                    : 'bg-white/5 border-white/20 text-slate-300 hover:bg-pink-500/10 hover:border-pink-400/50'
+                }`}
+              >
+                <span className="text-2xl mb-2 block">👤</span>
+                {genderContent[lang].female.select}
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={() => {
+              if (!gender) return;
               trackEvent(GA_EVENTS.ASSESSMENT_STARTED, {
                 language: lang,
+                gender: gender,
                 timestamp: Date.now()
               });
               trackEvent(GA_EVENTS.SECTION_VIEWED, {
@@ -1818,7 +1963,12 @@ export default function MaqamatAssessment() {
               });
               setStarted(true);
             }}
-            className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl text-lg font-semibold hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/25"
+            disabled={!gender}
+            className={`w-full py-4 rounded-xl text-lg font-semibold transition-all shadow-lg ${
+              gender 
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 hover:from-amber-400 hover:to-amber-500 shadow-amber-500/25 cursor-pointer' 
+                : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+            }`}
           >
             {t.startBtn}
           </button>
@@ -1836,7 +1986,7 @@ export default function MaqamatAssessment() {
     const station = stations.find(s => s.id === result.station);
     
     return (
-      <div className={`min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 p-4 md:p-6 ${lang === 'ur' ? 'font-urdu' : ''} ${lang === 'ar' ? 'font-arabic' : ''}`} dir={t.dir}>
+      <div className={`min-h-screen bg-gradient-to-b ${theme?.gradient || 'from-slate-900 via-slate-800 to-slate-900'} text-amber-50 p-4 md:p-6 ${lang === 'ur' ? 'font-urdu' : ''} ${lang === 'ar' ? 'font-arabic' : ''}`} dir={t.dir}>
         {/* Language Toggle */}
         <div className="fixed top-4 right-4 z-50">
           <LanguageSelector currentLang={lang} onLanguageChange={toggleLanguage} />
@@ -1844,15 +1994,18 @@ export default function MaqamatAssessment() {
 
         <div className="max-w-2xl mx-auto pt-8">
           <header className="text-center mb-8">
-            <div className="text-2xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>المقامات التسعة</div>
-            <h1 className="text-xl font-light">{t.results.title}</h1>
+            <div className={`text-2xl mb-2 ${theme?.textAccent || 'text-amber-400'}`} style={{ fontFamily: "'Amiri', serif" }}>المقامات التسعة</div>
+            <h1 className="text-xl font-light">{genderText?.result || t.results.title}</h1>
+            {genderText && (
+              <p className={`text-sm mt-2 ${theme?.textAccent || 'text-amber-400'}`}>{genderText.greeting}</p>
+            )}
           </header>
 
           {/* Station Badge */}
           <div className="flex justify-center mb-6">
             <div 
               className="w-28 h-28 rounded-full flex items-center justify-center text-4xl font-bold shadow-2xl"
-              style={{ background: `linear-gradient(135deg, ${station.color} 0%, ${station.color}99 100%)`, color: '#0a1628' }}
+              style={{ background: `linear-gradient(135deg, ${theme?.primary || station.color} 0%, ${theme?.secondary || station.color}99 100%)`, color: '#ffffff' }}
             >
               {station.id}
             </div>
@@ -1860,41 +2013,48 @@ export default function MaqamatAssessment() {
 
           {/* Station Info */}
           <div className="text-center mb-6">
-            <div className="text-3xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>{station.arabic}</div>
+            <div className={`text-3xl mb-2 ${theme?.textAccent || 'text-amber-400'}`} style={{ fontFamily: "'Amiri', serif" }}>{station.arabic}</div>
             <h2 className="text-xl text-white mb-1">{station.name}</h2>
             <p className="text-slate-400">{station.categoryMeaning}</p>
           </div>
 
           {/* Score */}
-          <div className="bg-white/5 rounded-xl p-4 mb-6 text-center">
+          <div className={`${theme?.cardBg || 'bg-white/5'} rounded-xl p-4 mb-6 text-center`}>
             <span className="text-slate-400">{t.results.score}: </span>
-            <span className="text-2xl font-bold text-amber-400">{result.score}</span>
+            <span className={`text-2xl font-bold ${theme?.textAccent || 'text-amber-400'}`}>{result.score}</span>
             <span className="text-slate-500 ml-2">{t.results.outOf}</span>
           </div>
 
           {/* Key Principle */}
-          <div className="bg-amber-400/10 border border-amber-400/30 rounded-xl p-5 mb-6">
-            <h3 className="text-amber-400 text-sm mb-2">{t.results.keyPrinciple}</h3>
+          <div className={`${theme?.cardBg || 'bg-amber-400/10'} border ${theme?.cardBorder || 'border-amber-400/30'} rounded-xl p-5 mb-6`}>
+            <h3 className={`${theme?.textAccent || 'text-amber-400'} text-sm mb-2`}>{t.results.keyPrinciple}</h3>
             <p className="text-white/90 italic">"{station.keyPrinciple}"</p>
           </div>
 
           {/* Example */}
           <div className="bg-white/5 rounded-xl p-5 mb-6">
-            <h3 className="text-emerald-400 text-sm mb-2">{t.results.example}</h3>
+            <h3 className={`${theme?.textAccent || 'text-emerald-400'} text-sm mb-2`}>{t.results.example}</h3>
             <p className="text-slate-300">{station.example}</p>
           </div>
 
           {/* Inspiration */}
           <div className="bg-white/5 rounded-xl p-5 mb-6">
-            <h3 className="text-purple-400 text-sm mb-2">{t.results.inspiration}</h3>
+            <h3 className={`${theme?.textAccent || 'text-purple-400'} text-sm mb-2`}>{t.results.inspiration}</h3>
             <p className="text-slate-300">{station.inspiration}</p>
           </div>
 
           {/* Taraqqi */}
-          <div className="bg-gradient-to-r from-emerald-400/10 to-teal-400/10 border border-emerald-400/30 rounded-xl p-5 mb-8">
-            <h3 className="text-emerald-400 text-sm mb-2">{t.results.pathForward}</h3>
+          <div className={`${theme?.cardBg || 'bg-gradient-to-r from-emerald-400/10 to-teal-400/10'} border ${theme?.cardBorder || 'border-emerald-400/30'} rounded-xl p-5 mb-6`}>
+            <h3 className={`${theme?.textAccent || 'text-emerald-400'} text-sm mb-2`}>{t.results.pathForward}</h3>
             <p className="text-slate-300">{station.taraqqi}</p>
           </div>
+
+          {/* Gender-specific encouragement */}
+          {genderText && (
+            <div className={`text-center mb-6 ${theme?.textAccent || 'text-amber-400'}`}>
+              <p className="text-lg italic">{genderText.encouragement}</p>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="space-y-3 mb-8">
@@ -1903,11 +2063,12 @@ export default function MaqamatAssessment() {
                 trackEvent(GA_EVENTS.SHARE_CLICKED, {
                   station_id: result?.station,
                   score: result?.score,
-                  language: lang
+                  language: lang,
+                  gender: gender
                 });
                 setShowShareModal(true);
               }}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-400 hover:to-teal-400 transition-all"
+              className={`w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r ${theme?.buttonGradient || 'from-emerald-500 to-teal-500'} text-white rounded-xl font-semibold hover:opacity-90 transition-all`}
             >
               {t.buttons.share}
             </button>
@@ -1923,7 +2084,7 @@ export default function MaqamatAssessment() {
             <div className="flex gap-3">
               <button
                 onClick={() => { setShowDashboard(true); window.scrollTo(0, 0); }}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 rounded-xl font-semibold hover:from-amber-400 hover:to-amber-500 transition-all"
+                className={`flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r ${theme?.buttonGradient || 'from-amber-500 to-amber-600'} text-white rounded-xl font-semibold hover:opacity-90 transition-all`}
               >
                 {t.buttons.explained}
               </button>
@@ -1937,8 +2098,8 @@ export default function MaqamatAssessment() {
           </div>
 
           {/* Paradise Message */}
-          <div className="bg-gradient-to-r from-amber-400/10 via-emerald-400/10 to-amber-400/10 rounded-xl p-6 text-center border border-amber-400/20 mb-8">
-            <div className="text-xl text-amber-400 mb-2" style={{ fontFamily: "'Amiri', serif" }}>كلهم من أهل الجنة</div>
+          <div className={`${theme?.cardBg || 'bg-gradient-to-r from-amber-400/10 via-emerald-400/10 to-amber-400/10'} rounded-xl p-6 text-center border ${theme?.cardBorder || 'border-amber-400/20'} mb-8`}>
+            <div className={`text-xl mb-2 ${theme?.textAccent || 'text-amber-400'}`} style={{ fontFamily: "'Amiri', serif" }}>كلهم من أهل الجنة</div>
             <h3 className="text-lg text-white mb-2">{t.results.allParadise}</h3>
             <p className="text-slate-400 text-sm italic">{t.results.faqih}</p>
           </div>
