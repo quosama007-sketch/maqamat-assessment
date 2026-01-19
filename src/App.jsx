@@ -1185,6 +1185,78 @@ const calculateStation = (answers, sections) => {
 };
 
 // ============================================
+// GENDER-BASED TEXT TRANSFORMATION
+// ============================================
+
+// Transform Urdu text from masculine to feminine verb forms
+const transformUrduForFemale = (text) => {
+  if (!text) return text;
+  
+  // Common masculine → feminine verb transformations in Urdu
+  // Pattern: تا ہوں → تی ہوں, تا → تی
+  let transformed = text
+    // Verb endings with ہوں
+    .replace(/تا ہوں/g, 'تی ہوں')
+    .replace(/تا ہے/g, 'تی ہے')
+    // Standalone verb endings
+    .replace(/کرتا/g, 'کرتی')
+    .replace(/پڑھتا/g, 'پڑھتی')
+    .replace(/رکھتا/g, 'رکھتی')
+    .replace(/دیتا/g, 'دیتی')
+    .replace(/بچتا/g, 'بچتی')
+    .replace(/گزارتا/g, 'گزارتی')
+    .replace(/چنتا/g, 'چنتی')
+    .replace(/سوچتا/g, 'سوچتی')
+    .replace(/محسوس کرتا/g, 'محسوس کرتی')
+    .replace(/کھیلتا/g, 'کھیلتی')
+    .replace(/دیکھتا/g, 'دیکھتی')
+    .replace(/سنتا/g, 'سنتی')
+    .replace(/جانتا/g, 'جانتی')
+    .replace(/مانتا/g, 'مانتی')
+    .replace(/چاہتا/g, 'چاہتی')
+    .replace(/لیتا/g, 'لیتی')
+    .replace(/آتا/g, 'آتی')
+    .replace(/جاتا/g, 'جاتی')
+    .replace(/ہوتا/g, 'ہوتی')
+    .replace(/کہتا/g, 'کہتی')
+    .replace(/سمجھتا/g, 'سمجھتی')
+    .replace(/پہنچتا/g, 'پہنچتی')
+    .replace(/رہتا/g, 'رہتی')
+    .replace(/ملتا/g, 'ملتی')
+    .replace(/چلتا/g, 'چلتی')
+    .replace(/اٹھتا/g, 'اٹھتی')
+    .replace(/بیٹھتا/g, 'بیٹھتی')
+    .replace(/سوتا/g, 'سوتی')
+    .replace(/کھاتا/g, 'کھاتی')
+    .replace(/پیتا/g, 'پیتی');
+  
+  return transformed;
+};
+
+// Transform sections data based on gender
+const getGenderedSections = (lang, gender, sectionsData) => {
+  const sections = sectionsData[lang];
+  
+  // Only transform Urdu for female gender
+  if (lang !== 'ur' || gender !== 'female') {
+    return sections;
+  }
+  
+  // Deep clone and transform Urdu sections for female
+  return sections.map(section => ({
+    ...section,
+    questions: section.questions.map(question => ({
+      ...question,
+      text: transformUrduForFemale(question.text),
+      options: question.options.map(option => ({
+        ...option,
+        label: transformUrduForFemale(option.label)
+      }))
+    }))
+  }));
+};
+
+// ============================================
 // LANGUAGE SELECTOR COMPONENT
 // ============================================
 
@@ -1525,7 +1597,7 @@ export default function MaqamatAssessment() {
   const resultCardRef = useRef(null);
 
   const t = content[lang];
-  const sections = sectionsData[lang];
+  const sections = getGenderedSections(lang, gender, sectionsData);
   const stations = stationsData[lang];
 
   // Gender-specific themes
